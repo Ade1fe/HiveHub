@@ -14,17 +14,17 @@ const LandingPage = () => {
         </Box>
       </Box>
 
-      <Box display='flex' flexDir='row' w='95%' marginX='auto' alignItems='center' justifyContent='space-between' px={['', '150px']} py={['', '90px']} gap='50px'>
-        <Box boxSize='60%'>
-          <Text as='h3' fontSize='xxx-large' fontWeight='600'>
+      <Box display='flex' flexDir='row' w='95%' marginX='auto' alignItems='center' justifyContent='space-between' px={['', '50px']} py={['', '90px']} gap='90px'>
+        <Box boxSize='75%' display='flex' flexDir='column' gap='10px'>
+          <Text as='h3' fontSize='60px' fontWeight='600' lineHeight='50px' wordBreak='keep-all'>
             Embark on an Adventure
           </Text>
-          <Text as='p' fontSize='larger' fontWeight='500'>
+          <Text as='p' fontSize='larger' fontWeight='500' textColor='GrayText'>
             Dive into Stories, Discover Insights, and Get Entertained!
           </Text>
         </Box>
 
-        <Box as={motion.div} animate={{ y: [-10, 10, -10], repeatCount: '1000000000' }} transition='1.5s ease-in-out infinte' boxSize='sm' h='auto' alignItems='center' justifyContent='center'>
+        <Box as={motion.div} animate={{ y: [-10, 10, -10] }} transition='1.5s infinte' boxSize='md' h='auto' alignItems='center' justifyContent='center' >
           <Image src={reader} objectFit='cover' alt='reader' />
         </Box>
         

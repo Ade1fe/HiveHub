@@ -1,1 +1,1 @@
-// export { default as Root } from "./Root/Root";
+export { default as blogimg } from "./images/blob.png";

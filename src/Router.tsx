@@ -1,10 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Homepage } from "./pages";
+import { Homepage, Welcome } from "./pages";
 
 
 const Router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
+    element: <Welcome />
+  },
+
+  {
+    path: "HiveHub",
     element: <Homepage />,
   },
  

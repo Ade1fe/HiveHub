@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import { AdvertContainer, SideContainer, TabContainer } from '../../components';
+import { AdvertContainer, Footer, SideContainer, TabContainer } from '../../components';
 
 const Homepage = () => {
   return (
@@ -15,7 +15,7 @@ const Homepage = () => {
         <SideContainer />
       </Box>
       </Box>
-
+      <Footer />
     </Box>
   );
 }

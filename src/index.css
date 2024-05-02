@@ -16,12 +16,92 @@
     outline: none;
 }
 
-.sphere {
+.ball1 {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    border: none;
+    outline: none;
+}
+
+.ball2 {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 10%;
+    right: 15%;
+    border: none;
+    outline: none;
+}
+
+.ball3 {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 40%;
+    right: 35%;
+    border: none;
+    outline: none;
+}
+
+.ball4 {
+    width: 35px;
     height: 35px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 70%;
+    left: 35%;
+    border: none;
+    outline: none;
+}
+
+.star {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 50%;
+    right: 55%;
+    border: none;
+    outline: none;
+}
+
+.star1 {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 55%;
+    left: 20%;
+    border: none;
+    outline: none;
+}
+
+.sphere {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     position: absolute;
     top: 20%;
     left: 20%;
+    border: none;
+    outline: none;
+}
+
+.sphere1 {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 25%;
+    right: 5%;
     border: none;
     outline: none;
 }
@@ -55,7 +135,12 @@
 
 @media(max-width: 468px) {
     .stupidChakraUI {
-        display: none;
+        order: 0;
+        width: 100%;
+    }
+
+    .text {
+        order: 1;
     }
 
     .ball {
@@ -65,8 +150,42 @@
         height: 25px;
     }
 
+    .ball1 {
+        top: 25%;
+        left: 23%;
+    }
+
+    .ball2 {
+        top: 10%;
+        right: 5%;
+    }
+
+    .ball3 {
+        top: 45%;
+        right: 5%;
+    }
+
+    .ball4 {
+        top: 80%;
+        left: 60%;
+    }
+
+    .star {
+        top: 55%;
+        right: 35%;
+    }
+
+    .star1 {
+        top: 60%;
+        left: 15%;
+    }
+
     .sphere {
         top: 25%;
         left: 40%;
+    }
+
+    .sphere1 {
+        display: none;
     }
 }

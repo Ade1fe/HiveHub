@@ -1,8 +1,29 @@
 .stupidChakraUI {
-    width: 45%;
+    width: 55%;
     height: auto;
     align-items: center;
     justify-content: center;
+}
+
+.ball {
+    width: 35px;
+    height: 35px;
+    border-radius: 100%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 20px;
+    border: none;
+    outline: none;
+}
+
+.sphere {
+    height: 35px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    border: none;
+    outline: none;
 }
 
 .logo{
@@ -30,4 +51,22 @@
     font-variation-settings:
       "wdth" 100,
       "YTLC" 500;
+}
+
+@media(max-width: 468px) {
+    .stupidChakraUI {
+        display: none;
+    }
+
+    .ball {
+        top: 10%;
+        left: 7%;
+        width: 25px;
+        height: 25px;
+    }
+
+    .sphere {
+        top: 25%;
+        left: 40%;
+    }
 }

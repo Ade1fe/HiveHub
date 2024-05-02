@@ -9,7 +9,7 @@ const Router = createBrowserRouter([
   },
 
   {
-    path: "HiveHub",
+    path: "hive-hub",
     element: <Homepage />,
   },
  

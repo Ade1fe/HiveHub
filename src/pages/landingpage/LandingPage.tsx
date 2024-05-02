@@ -9,7 +9,7 @@ const LandingPage = () => {
   const animateWidth = useBreakpointValue({ base: '50%', md: '35%' });
   const initialHeight = useBreakpointValue({ base: '25px', md: '35px' });
   const exitHeight = useBreakpointValue({ base: '25px', md: '35px' });
-  const animateHeight = useBreakpointValue({ base: '25px', md: '35%' });
+  const animateHeight = useBreakpointValue({ base: '25px', md: '35px' });
 
   return (
     <Box display='flex' flexDir='column' w='100%' alignItems='center' justifyContent='center' gap={['20px', '50px']}>
@@ -17,7 +17,7 @@ const LandingPage = () => {
         <Text as='h1' fontWeight='500' cursor='pointer'>HiveHub</Text>
         <Box display='flex' gap={[ '10px', '20px' ]}>
           <Button px={[ '5px','10px']} borderRadius='250px' variant='ghost' fontWeight='400' colorScheme='none' cursor='pointer'>Sign in</Button>
-          <Button px={[ '5px','10px']} borderRadius='250px' variant='solid' bg='black' color='white' colorScheme='black' fontWeight='400' cursor='pointer'>Start reading</Button>
+          <Button w={['120px', 'auto']} px={[ '5px','10px']} borderRadius='250px' variant='solid' bg='black' color='white' colorScheme='black' fontWeight='400' cursor='pointer'>Start reading</Button>
         </Box>
       </Box>
 

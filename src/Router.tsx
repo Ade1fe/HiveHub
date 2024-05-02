@@ -1,11 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Homepage, Welcome } from "./pages";
+import { Homepage, Landingpage } from "./pages";
 
 
 const Router = createBrowserRouter([
   {
     path: '/',
-    element: <Welcome />
+    element: <Landingpage />
   },
 
   {

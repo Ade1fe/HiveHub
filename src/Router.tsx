@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Homepage, LandingPage,  } from "./pages";
+import { DisplayPage, Homepage, LandingPage, WritePage,  } from "./pages";
 
 
 const Router = createBrowserRouter([
@@ -12,7 +12,14 @@ const Router = createBrowserRouter([
     path: "hive-hub",
     element: <Homepage />,
   },
- 
+  {
+    path: "display/:id",
+    element: <DisplayPage />,
+  },
+  {
+    path: "admin",
+    element: <WritePage />,
+  },
 ]);
 
 export default Router;

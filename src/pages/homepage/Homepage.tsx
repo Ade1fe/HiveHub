@@ -7,7 +7,7 @@ const Homepage = () => {
       <AdvertContainer />
 
       <Box className="" maxW='1340px' mx='auto' mt='20px' display={['flex']} gap='20px'>
-      <Box className="" w={['65%']}>
+      <Box className="" w={['65%']} >
         <TabContainer />
       </Box>
 
@@ -15,6 +15,7 @@ const Homepage = () => {
         <SideContainer />
       </Box>
       </Box>
+      
       <Footer />
     </Box>
   );

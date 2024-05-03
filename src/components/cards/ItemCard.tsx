@@ -45,7 +45,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ category, date, title, description,
         </Box>
 
         <Box className="" w='30%'>
-          <Image w='full' h='full' objectFit='cover' src={imageSrc} alt={title} />
+          <Image w='full' h='310px' objectFit='cover' src={imageSrc} alt={title} />
         </Box>
       </Box>
     </Box>

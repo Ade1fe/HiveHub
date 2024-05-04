@@ -21,13 +21,13 @@ const TabContainer = () => {
     <Box className="" >
 
     <Tabs position='relative' variant='unstyled' >
-  <TabList borderBottomWidth='1px' py='5px' >
+  <TabList borderBottomWidth='1px' py='5px' bg='white' color='black'  zIndex='99' position={['static', 'static', 'sticky']} top={['auto', 'auto', '0']} right={['auto', 'auto', '0']}>
     <Tab>One</Tab>
     <Tab>Two</Tab>
     <Tab>Three</Tab>
   </TabList>
   <TabIndicator mt='-1.5px' height='2px' bg='black' borderRadius='1px' />
-  <TabPanels mt='1rem'>
+  <TabPanels mt='1rem'  overflowY="auto" maxHeight="calc(100vh )">
     <TabPanel>
     <ItemCard 
         category={post.category}
@@ -37,6 +37,56 @@ const TabContainer = () => {
         author={post.author}
         imageSrc={post.imageSrc}
       />
+      <ItemCard 
+        category={post.category}
+        date={post.date}
+        title={post.title}
+        description={post.description}
+        author={post.author}
+        imageSrc={post.imageSrc}
+      />
+      <ItemCard 
+        category={post.category}
+        date={post.date}
+        title={post.title}
+        description={post.description}
+        author={post.author}
+        imageSrc={post.imageSrc}
+      />
+
+      <ItemCard 
+        category={post.category}
+        date={post.date}
+        title={post.title}
+        description={post.description}
+        author={post.author}
+        imageSrc={post.imageSrc}
+      />
+      <ItemCard 
+        category={post.category}
+        date={post.date}
+        title={post.title}
+        description={post.description}
+        author={post.author}
+        imageSrc={post.imageSrc}
+      />
+      <ItemCard 
+        category={post.category}
+        date={post.date}
+        title={post.title}
+        description={post.description}
+        author={post.author}
+        imageSrc={post.imageSrc}
+      />
+      <ItemCard 
+        category={post.category}
+        date={post.date}
+        title={post.title}
+        description={post.description}
+        author={post.author}
+        imageSrc={post.imageSrc}
+      />
+      
     </TabPanel>
     <TabPanel>
     <ItemCard 

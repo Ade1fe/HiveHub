@@ -1,4 +1,4 @@
-export { default as LandingPage }from './landingpage/LandingPage'; 
+export { default as Landingpage }from './landingpage/Landingpage'; 
 export { default as Homepage } from './homepage/Homepage';
 export { default as DisplayPage } from './displaypage/DisplayPage'; 
 export { default as WritePage } from './writepage/WritePage';

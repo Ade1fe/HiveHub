@@ -1,4 +1,4 @@
-.stupidChakraUI {
+.sChakraUI {
     width: 55%;
     height: auto;
     align-items: center;
@@ -90,7 +90,7 @@
 .sphere {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     position: absolute;
-    top: 20%;
+    top: 10%;
     left: 20%;
     border: none;
     outline: none;
@@ -141,7 +141,7 @@
 }
 
 @media(max-width: 468px) {
-    .stupidChakraUI {
+    .sChakraUI {
         order: 0;
         width: 100%;
     }
@@ -197,102 +197,3 @@
     }
 }
 
-
-/* footer */
-
-:root {
-    --dk-blue: #1E83AE;
-    --blue: #3D5B94;
-    --light-blue: #3DACDD;
-    --green: #6dcd9a;
-    --social-size: 1em;
-    --social-width: 20%;
-  }
-  
-  
-  
-  footer {
-    width: 100%;
-    display: inline-block;
-    margin-top: 2em;
-    margin-bottom: -1rem;
-    height: 50px;
-    background-color: #999;
-  }
-  
-  footer .copyright {
-    width: 50%;
-    float: left;
-  }
-  
-  @media (max-width: 768px) {
-    footer .copyright {
-      width: 100%;
-    }
-  }
-  
-  footer .copyright p {
-    padding-left: 10%;
-    color: white;
-    font-size: 0.7em;
-    line-height: 50px;
-    text-transform: capitalize;
-    letter-spacing: 1px;
-  }
-  
-  @media (max-width: 768px) {
-    footer .copyright p {
-      text-align: center;
-      padding: 0;
-    }
-  }
-  
-  footer .social {
-    width: 50%;
-    float: right;
-  }
-  
-  @media (max-width: 768px) {
-    footer .social {
-      width: 100%;
-    }
-  }
-  
-  footer .social a {
-    float: left;
-    line-height: 50px;
-    text-decoration: none;
-    color: white;
-    text-align: center;
-    font-weight: bold;
-    transition: all 0.3s;
-  }
-  
-  footer .social a:hover {
-    background-color: #222;
-    transition: all 0.3s;
-  }
-  
-  .linked {
-    background-color: var(--dk-blue);
-    font-size: var(--social-size);
-    width: var(--social-width);
-  }
-  
-  .face {
-    background-color: var(--blue);
-    font-size: var(--social-size);
-    width: var(--social-width);
-  }
-  
-  .tweet {
-    background-color: var(--light-blue);
-    font-size: var(--social-size);
-    width: var(--social-width);
-  }
-  
-  .support {
-    background-color: var(--green);
-    font-size: 0.8em;
-    width: 40%;
-  }

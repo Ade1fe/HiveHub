@@ -51,7 +51,7 @@ const LandingPage = () => {
   }
 
   return (
-    <Box display='flex' flexDir='column' w='100%' alignItems='center' justifyContent='center' gap={['20px', '30px']}>
+    <Box display='flex' flexDir='column' w='100%' alignItems='center' justifyContent='center' gap={['20px', '30px']}  maxW="1440px" mx='auto' px={[4,4,4,4,2,0]} >
       <Header toggleModal={(type: string) => toggleModal(type)} />
 
       <Box display='flex' flexDir={['column', 'row']} w={['100%', '95%']} marginX='auto' pos='relative' alignItems='center' justifyContent={['center', 'space-between']} px={['2%', '3%']} py={['2%', '6.49%']} gap={['40px', '60px']} overflow='hidden'>
@@ -59,18 +59,24 @@ const LandingPage = () => {
         <motion.div initial={{ opacity: 1, background: '#656d4a', width: initialWidth, height: initialHeight, borderRadius: '50%' }} animate={{ opacity: 0.5, background: '#b5179e', width: animateWidth, height: animateHeight, borderRadius: '10px' }} exit={{ opacity: 1, background: '#455e89', width: exitWidth, height: exitHeight, borderRadius: '50%' }} transition={{ type: 'tween', duration: 2.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="sphere" ></motion.div>
 
         <Box w={[ '100%', '75%' ]} display='flex' flexDir='column' gap='10px' className="text">
-          <Text as='h3' fontSize={['40px', '50px']} fontWeight='600' lineHeight={['35px', '50px']}>
-            Embark on an Adventure
-          </Text>
-          <Text as='p' fontSize='larger' fontWeight='500' textColor='GrayText' lineHeight={['20px']}>
-            Dive into Captivating Stories, Discover Hidden Insights, and Immerse Yourself in Endless Entertainment!
-          </Text>
 
-          <Button w={['120px', '150px']} px='5px' borderRadius='250px' variant='solid' bg='black' color='white' colorScheme='black' fontWeight='400' cursor='pointer' onClick={() => toggleModal('reading')}>Start reading</Button>
+        <Text as='h3' fontSize={['40px', '50px']} fontWeight='600' >
+  Embark on an <Text as='span' color='blue.900'>Adventure</Text>
+</Text>
+<Text as='p' fontSize='larger' fontWeight='500' textColor='GrayText' >
+  Dive into Captivating Stories, Discover Hidden Insights, and Immerse Yourself in Endless Entertainment!
+</Text>
+<Text as='p' fontSize='large' fontWeight='400' textColor='GrayText' >
+  Ready to explore? Our platform offers thrilling adventures, insightful narratives, and captivating entertainment for all. Join our community and ignite your imagination. Your journey starts here.
+</Text>
+
+
+
+          <Button w={['120px', '150px']} px='5px' borderRadius='250px' variant='solid' bg='black' color='white' colorScheme='black' fontWeight='400' cursor='pointer' onClick={() => toggleModal('reading')} mt='1rem'>Start reading</Button>
         </Box>
 
         <AnimatePresence>
-          <motion.div initial={{ opacity: 1, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 1, y: -5 }} transition={{ duration: 3.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="stupidChakraUI">
+          <motion.div initial={{ opacity: 1, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 1, y: -5 }} transition={{ duration: 3.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="sChakraUI">
             <Image src={reader} objectFit='cover' w='100%' h='auto' alt='reader' />
           </motion.div>
         </AnimatePresence>

@@ -1,11 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Homepage, LandingPage,  } from "./pages";
+import { DisplayPage, Homepage, LandingPage, WritePage,  } from "./pages";
+
 
 
 const Router = createBrowserRouter([
   {
     path: '/',
-    element: <Landingpage />
+    element: <LandingPage />
   },
 
   {

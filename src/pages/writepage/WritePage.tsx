@@ -3,7 +3,6 @@ import { Box, Button, Icon, Menu, MenuButton, MenuDivider, MenuItem, MenuList, T
 import { FaCameraRetro, FaPlusCircle, FaVideo } from 'react-icons/fa';
 import { ChromePicker } from 'react-color';
 
-
 const WritePage: React.FC = () => {
   const [content, setContent] = useState('');
   const [linkModalOpen, setLinkModalOpen] = useState(false);
@@ -12,12 +11,14 @@ const WritePage: React.FC = () => {
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [titles, setTitles] = useState<string[]>([]);
+  const [subtitles, setSubtitles] = useState<string[]>([]);
+  const [titleColors, setTitleColors] = useState<string[]>([]);
   const [titleModalOpen, setTitleModalOpen] = useState(false);
   const [titleInput, setTitleInput] = useState('');
-  const [titleColor, setTitleColor] = useState('#000000');
   const [subtitleModalOpen, setSubtitleModalOpen] = useState(false);
   const [subtitleInput, setSubtitleInput] = useState('');
-  const [subtitleColor, setSubtitleColor] = useState('#0000FF');
+  const [subtitleColors, setSubtitleColors] = useState<string[]>([]);
 
   const handleInsertLink = () => {
     setLinkModalOpen(true);
@@ -66,7 +67,7 @@ const WritePage: React.FC = () => {
   const handlePublish = () => {
     console.log('Published:', content);
     console.log('Uploaded image:', imageFile);
-    console.log('Uploaded video:', videoFile); // Log uploaded video file
+    console.log('Uploaded video:', videoFile); 
     // Reset content state or perform other actions as needed
     // setContent('');
     // setImageFile(null);
@@ -92,27 +93,42 @@ const WritePage: React.FC = () => {
       } else if (line === '[Video]' && videoFile) {
         const videoUrl = URL.createObjectURL(videoFile);
         return <video key={index} controls style={{ maxWidth: '100%', maxHeight: '300px' }}><source src={videoUrl} type="video/mp4" /></video>;
-      } else if (line === '[Title]') {
-        return <Text key={index} fontSize="2xl" fontWeight="bold" color={titleColor}>{titleInput}</Text>;
-      } else if (line === '[Subtitle]') {
-        return <Text key={index} fontSize="lg" color={subtitleColor}>{subtitleInput}</Text>;
       } else {
-        // Assuming line is a paragraph
-        return <Text key={index} fontSize="sm">{line}</Text>;
+        // Assuming line is a paragraph or a title/subtitle reference
+      // Assuming line is a paragraph or a title/subtitle reference
+if (line.startsWith('[Title:')) {
+  const titleIndex = parseInt(line.substring(7, line.length - 1), 10);
+  return <Text key={index} fontSize="2xl" fontWeight="bold" color={titleColors[titleIndex]}>{titles[titleIndex]}</Text>;
+} else if (line.startsWith('[Subtitle:')) {
+  const subtitleIndex = parseInt(line.substring(10, line.length - 1), 10);
+  return <Text key={index} fontSize="lg" color={subtitleColors[subtitleIndex]}>{subtitles[subtitleIndex]}</Text>;
+} else {
+  // Paragraph
+  return <Text key={index} fontSize="sm">{line}</Text>;
+}
+
       }
     });
   };
 
   const handleAddTitleConfirm = () => {
-    setContent((prevContent) => prevContent + '\n[Title]');
+    const newTitles = [...titles, titleInput];
+    const newTitleColors = [...titleColors, titleColors[titleColors.length - 1]];
+    setTitles(newTitles);
+    setTitleColors(newTitleColors);
+    setContent((prevContent) => prevContent + `\n[Title:${newTitles.length - 1}]`);
     setTitleModalOpen(false);
-    
+    setTitleInput('');
   };
 
   const handleAddSubtitleConfirm = () => {
-    setContent((prevContent) => prevContent + '\n[Subtitle]');
+    const newSubtitles = [...subtitles, subtitleInput];
+    const newSubtitleColors = [...subtitleColors, subtitleColors[subtitleColors.length - 1]];
+    setSubtitles(newSubtitles);
+    setSubtitleColors(newSubtitleColors);
+    setContent((prevContent) => prevContent + `\n[Subtitle:${newSubtitles.length - 1}]`);
     setSubtitleModalOpen(false);
-    
+    setSubtitleInput('');
   };
 
   return (
@@ -211,8 +227,19 @@ const WritePage: React.FC = () => {
             <Box mt={4}>
               <FormControl>
                 <FormLabel>Choose Title Color</FormLabel>
-                <Circle size="32px" bg={titleColor} mb={2} />
-                <ChromePicker color={titleColor} onChange={(color: { hex: React.SetStateAction<string>; }) => setTitleColor(color.hex)} />
+                <Circle size="32px" bg={titleColors[titleColors.length - 1]} mb={2} />
+                <ChromePicker
+  color={titleColors[titleColors.length - 1]}
+  onChange={(color) => {
+    const newColor = color.hex;
+    setTitleColors((prevColors) => [
+      ...prevColors.slice(0, -1),
+      newColor,
+    ]);
+  }}
+/>
+
+
               </FormControl>
             </Box>
           </ModalBody>
@@ -232,9 +259,19 @@ const WritePage: React.FC = () => {
             <Box mt={4}>
               <FormControl>
                 <FormLabel>Choose Subtitle Color</FormLabel>
-                <Circle size="32px" bg={subtitleColor} mb={2} />
-                <ChromePicker color={subtitleColor} onChange={(color: { hex: React.SetStateAction<string>; }) => setSubtitleColor(color.hex)} />
-              </FormControl>
+                <Circle size="32px" bg={subtitleColors[subtitleColors.length - 1]} mb={2} />
+                <ChromePicker
+  color={subtitleColors[subtitleColors.length - 1]}
+  onChange={(color) => {
+    const newColor = color.hex;
+    setSubtitleColors((prevColors) => [
+      ...prevColors.slice(0, -1),
+      newColor,
+    ]);
+  }}
+/>
+
+</FormControl>
             </Box>
           </ModalBody>
           <ModalFooter>

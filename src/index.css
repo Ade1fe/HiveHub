@@ -132,6 +132,14 @@
       "YTLC" 500;
 }
 
+.facebook {
+  color: blue;
+}
+
+.facebook, .google, .email {
+  font-size: large;
+}
+
 @media(max-width: 468px) {
     .stupidChakraUI {
         order: 0;
@@ -217,7 +225,7 @@
     float: left;
   }
   
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     footer .copyright {
       width: 100%;
     }
@@ -232,7 +240,7 @@
     letter-spacing: 1px;
   }
   
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     footer .copyright p {
       text-align: center;
       padding: 0;
@@ -244,7 +252,7 @@
     float: right;
   }
   
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     footer .social {
       width: 100%;
     }

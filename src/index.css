@@ -132,6 +132,14 @@
       "YTLC" 500;
 }
 
+.facebook {
+  color: blue;
+}
+
+.facebook, .google, .email {
+  font-size: large;
+}
+
 @media(max-width: 468px) {
     .stupidChakraUI {
         order: 0;

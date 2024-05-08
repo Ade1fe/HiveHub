@@ -1,7 +1,11 @@
 import { Box, Button, Image, Text, useBreakpointValue } from "@chakra-ui/react"
 import { AnimatePresence, motion } from "framer-motion";
 import reader from '../../assets/woman-using-digital-tablet-technology.png'
-import { Header } from "../../components";
+import { CustomModal, Footer, Header } from "../../components";
+import { useState } from "react";
+import { FcGoogle } from "react-icons/fc";
+import { BsFacebook } from "react-icons/bs";
+import { HiOutlineMail } from "react-icons/hi";
 // import reader2 from '../../assets/woman-using-digital-tablet-technology.png'
 
 const LandingPage = () => {
@@ -12,11 +16,45 @@ const LandingPage = () => {
   const exitHeight = useBreakpointValue({ base: '25px', md: '25px' });
   const animateHeight = useBreakpointValue({ base: '25px', md: '25px' });
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSignInOpen, setIsSignInOpen] = useState(false);
+
+  const toggleModal = (configType: string) => {
+    setIsSignInOpen(configType === 'signin');
+    setIsModalOpen(true);
+  };
+
+  const signUpConfig = {
+    title: 'Come aboard Hivehub',
+    buttons: [
+      { onClick: () => {}, icon: <FcGoogle className='google' />, text: 'Google', },
+      { onClick: () => {}, icon: <BsFacebook className='facebook' />, text: 'Facebook', },
+      { onClick: () => {}, icon: <HiOutlineMail className='email' />, text: 'Email', },
+    ],
+    texts: [
+      { content: 'Already have an account? <span style="color: blue; font-weight: bold; cursor: pointer;">Sign in</span>', textStyles: { fontSize: '16px' }, configType: 'signin' },
+      { content: 'Click “Sign up” to agree to Hivehub’s <span style="text-decoration: underline; cursor: pointer; ">Terms of Service</span> and acknowledge that Hivehub <span style="text-decoration: underline; cursor: pointer; ">Privacy Policy</span> applies to you.', textStyles: { padding: '8px 5px', marginTop: '20px', width: '90% 70% ', fontSize: '10px 14px' } },
+    ]
+  }
+
+  const signInConfig = {
+    title: 'Welcome back.',
+    buttons: [
+      { onClick: () => {}, icon: <FcGoogle className='google' />, text: 'Google', },
+      { onClick: () => {}, icon: <BsFacebook className='facebook' />, text: 'Facebook', },
+      { onClick: () => {}, icon: <HiOutlineMail className='email' />, text: 'Email', },
+    ],
+    texts: [
+      { content: 'No account? <span style="color: green; font-weight: bold; cursor: pointer;">Create one</span>', textStyles: { fontSize: '16px' }, configType: 'signup' },
+      { content: 'Click “Sign up” to agree to Hivehub’s <span style="text-decoration: underline; cursor: pointer; ">Terms of Service</span> and acknowledge that Hivehub <span style="text-decoration: underline; cursor: pointer; ">Privacy Policy</span> applies to you.', textStyles: { padding: '8px 5px', marginTop: '20px', width: '90% 70% ', fontSize: '10px 14px' } },
+    ]
+  }
+
   return (
     <Box display='flex' flexDir='column' w='100%' alignItems='center' justifyContent='center' gap={['20px', '30px']}>
-      <Header />
+      <Header toggleModal={(type: string) => toggleModal(type)} />
 
-      <Box display='flex' flexDir={['column', 'row']} w={['100%', '95%']} marginX='auto' pos='relative' alignItems='center' justifyContent={['center', 'space-between']} px={['2%', '3%']} py={['2%', '7%']} gap={['40px', '60px']} overflow='hidden'>
+      <Box display='flex' flexDir={['column', 'row']} w={['100%', '95%']} marginX='auto' pos='relative' alignItems='center' justifyContent={['center', 'space-between']} px={['2%', '3%']} py={['2%', '6.49%']} gap={['40px', '60px']} overflow='hidden'>
         <motion.div initial={{ opacity: 1, y: -20, background: '#e5989b' }} animate={{ opacity: 0.5, y: 0, background: '#0077b6' }} exit={{ opacity: 1, y: -20, background: '#cdb4db' }} transition={{ type: 'tween', duration: 1.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="ball" ></motion.div>
         <motion.div initial={{ opacity: 1, background: '#656d4a', width: initialWidth, height: initialHeight, borderRadius: '50%' }} animate={{ opacity: 0.5, background: '#b5179e', width: animateWidth, height: animateHeight, borderRadius: '10px' }} exit={{ opacity: 1, background: '#455e89', width: exitWidth, height: exitHeight, borderRadius: '50%' }} transition={{ type: 'tween', duration: 2.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="sphere" ></motion.div>
 
@@ -28,7 +66,7 @@ const LandingPage = () => {
             Dive into Captivating Stories, Discover Hidden Insights, and Immerse Yourself in Endless Entertainment!
           </Text>
 
-          <Button w={['120px', '150px']} px='5px' borderRadius='250px' variant='solid' bg='black' color='white' colorScheme='black' fontWeight='400' cursor='pointer'>Start reading</Button>
+          <Button w={['120px', '150px']} px='5px' borderRadius='250px' variant='solid' bg='black' color='white' colorScheme='black' fontWeight='400' cursor='pointer' onClick={() => toggleModal('reading')}>Start reading</Button>
         </Box>
 
         <AnimatePresence>
@@ -50,10 +88,10 @@ const LandingPage = () => {
         <motion.div initial={{ opacity: 1, y: -20, background: '#e5989b' }} animate={{ opacity: 0.5, y: 0, background: '#affc41' }} exit={{ opacity: 1, y: -20, background: '#ff1654' }} transition={{ type: 'tween', duration: 2.0, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="ball4" ></motion.div>
         <motion.div initial={{ opacity: 1, x: -20, background: '#ee6055', clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }} animate={{ opacity: 0.5, x: 0, background: '#fbff12' }} exit={{ opacity: 1, x: -20, background: '#662e9b' }} transition={{ type: 'tween', duration: 1.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="star1"></motion.div>
       </Box>
+      
+      <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} modalConfig={isSignInOpen ? signInConfig : signUpConfig} toggleModal={toggleModal} />
 
-      {/* <Box>
-
-      </Box> */}
+      <Footer />
     </Box>
   )
 }

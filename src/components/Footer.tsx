@@ -2,7 +2,7 @@ import { Box } from '@chakra-ui/react'
 
 const Footer = () => {
   return (
-    <Box>
+    <Box w='100%'>
       <footer>  
         <Box className="copyright">
           <p>&copy 2024 - HiveHub</p>

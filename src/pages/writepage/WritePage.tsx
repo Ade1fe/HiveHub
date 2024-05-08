@@ -106,6 +106,7 @@ const WritePage: React.FC = () => {
   const handleAddTitleConfirm = () => {
     setContent((prevContent) => prevContent + '\n[Title]');
     setTitleModalOpen(false);
+    
   };
 
   const handleAddSubtitleConfirm = () => {

@@ -3,7 +3,7 @@ import { Box, Button, Icon, Menu, MenuButton, MenuDivider, MenuItem, MenuList, T
 import { FaCameraRetro, FaPlusCircle, FaVideo } from 'react-icons/fa';
 import { ChromePicker } from 'react-color';
 
-const WritePage: React.FC = () => {
+const WriteComp: React.FC = () => {
   const [content, setContent] = useState('');
   const [linkModalOpen, setLinkModalOpen] = useState(false);
   const [linkInput, setLinkInput] = useState('');
@@ -161,7 +161,7 @@ if (line.startsWith('[Title:')) {
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder='Tell us your story'
-          rows={10}
+          rows={20}
         />
       </Box>
 
@@ -306,4 +306,4 @@ if (line.startsWith('[Title:')) {
   );
 }
 
-export default WritePage;
+export default WriteComp

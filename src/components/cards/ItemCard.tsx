@@ -20,7 +20,7 @@ interface ItemCardProps {
 const ItemCard: React.FC<ItemCardProps> = ({ category, date, title, description, author, imageSrc }) => {
   return (
     <Box className="texts" my='4'>
-      <Box className="" display={['flex']} w='' shadow='base' _hover={{ bg: "#222", color: "white", transform: "scale(1.009)", transition: "transform 0.3s ease-in-out"  }} cursor='pointer' alignItems='center' gap='4'>
+      <Box className="" borderRadius='10px' display={['flex']} w='' shadow='base' _hover={{ bg: "#222", color: "white", transform: "scale(1.009)", transition: "transform 0.3s ease-in-out" , borderRadius: "20px" }} cursor='pointer' alignItems='center' gap='4'>
         <Box w={['70%']} px={['20px']} py='40px'>
           <Box display="flex" gap='4'>
             <Text bg='blue.100' w='fit-content' shadow='md' py='1' px='2' color='white' fontWeight='500' borderRadius='5'> {category}</Text>

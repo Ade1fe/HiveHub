@@ -4,7 +4,7 @@ import { Box, Text, Button } from '@chakra-ui/react'
 const Header = ({ toggleModal }: any) => {
   
   return (
-    <Box display='flex' flexDir='row' w='100%' h='auto' alignItems='center' justifyContent='space-between' textAlign='center' px={[ '4px', '40px' ]} py={[ '8px', '12px', ]} mt='1rem' borderBottom='1px' borderBottomColor='lightgray'>
+    <Box display='flex' flexDir='row' w='100%' h='auto' alignItems='center' justifyContent='space-between' textAlign='center' px={[ '4px', '40px' ]} py={[ '8px', '12px', ]}  borderBottom='1px' borderBottomColor='lightgray'>
         <Text as='h1' fontWeight='500' cursor='pointer'>HiveHub</Text>
         <Box display='flex' gap={[ '10px', '20px' ]} textAlign='center'>
           <Box textAlign='center' alignItems='center' display='flex'>

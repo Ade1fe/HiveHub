@@ -3,17 +3,17 @@ import React from 'react';
 import { Box, Button, Image, Text } from '@chakra-ui/react';
 
 interface Author {
-  name: string;
-  avatar: string;
+  name?: string;
+  avatar?: string;
 }
 
 interface ItemCardProps {
-  category: string;
-  date: string;
-  title: string;
-  description: string;
-  author: Author;
-  imageSrc: string;
+  category?: string;
+  date?: string;
+  title?: string;
+  description?: string;
+  author?: Author;
+  imageSrc?: string;
 }
 
 
@@ -38,8 +38,8 @@ const ItemCard: React.FC<ItemCardProps> = ({ category, date, title, description,
           <Box display="flex" alignItems='center' gap='3' mt='4'>
             <Button bg='blue.200' _hover={{ bg: "blue.100" }} py='2' px='5' borderRadius='100px' color='white'> Read full post</Button>
             <Box className="" display="flex" alignItems='center' gap='2'>
-              <Image boxSize='50px' borderRadius='50%' src={author.avatar} alt={author.name} />
-              <Text fontWeight='700'>by {author.name}</Text>
+              <Image boxSize='50px' borderRadius='50%' src={author?.avatar} alt={author?.name} />
+              <Text fontWeight='700'>by {author?.name}</Text>
             </Box>
           </Box>
         </Box>

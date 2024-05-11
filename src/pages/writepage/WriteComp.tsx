@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, Icon, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, Textarea, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, Circle,  FormControl, FormLabel } from '@chakra-ui/react';
 import { FaCameraRetro, FaPlusCircle, FaVideo } from 'react-icons/fa';
 import { ChromePicker } from 'react-color';
+import { v4 as uuidv4 } from 'uuid';
+import { auth, firestore, storage } from '../../firebase';
+import { User } from 'firebase/auth';
+import { addDoc, collection, doc, getDoc } from 'firebase/firestore';
+import 'firebase/firestore';
+import {  getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 const WriteComp: React.FC = () => {
   const [content, setContent] = useState('');
@@ -9,8 +15,8 @@ const WriteComp: React.FC = () => {
   const [linkInput, setLinkInput] = useState('');
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [imageFileData, setImageFileData] = useState<string | null>(null);
+  const [videoFileData, setVideoFileData] = useState<string | null>(null);
   const [titles, setTitles] = useState<string[]>([]);
   const [subtitles, setSubtitles] = useState<string[]>([]);
   const [titleColors, setTitleColors] = useState<string[]>([]);
@@ -19,7 +25,130 @@ const WriteComp: React.FC = () => {
   const [subtitleModalOpen, setSubtitleModalOpen] = useState(false);
   const [subtitleInput, setSubtitleInput] = useState('');
   const [subtitleColors, setSubtitleColors] = useState<string[]>([]);
-  const [previewModalOpen, setPreviewModalOpen] = useState(false); 
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(auth.currentUser);
+  const [renderedContent, setRenderedContent] = useState<JSX.Element[]>([]);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const contentElements = await renderContentWithLinks();
+      setRenderedContent(contentElements);
+    };
+  
+    fetchContent();
+  }, [content, imageFileData, videoFileData]); 
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user: User | null) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (currentUser) {
+        try {
+          const userDocRef = doc(firestore, 'coinbaseusers', currentUser.uid);
+          const docSnapshot = await getDoc(userDocRef);
+          if (docSnapshot.exists()) {
+            const data = docSnapshot.data();
+            setContent(data.content);
+            setTitles(data.titles || []);
+            setSubtitles(data.subtitles || []);
+            setTitleColors(data.titleColors || []);
+            setSubtitleColors(data.subtitleColors || []);
+            setLinkInput(data.linkInput || []);
+            setImageFileData(data.imageFileData || []);
+            setVideoFileData(data.videoFileData || []);
+          }
+        } catch (error) {
+          console.error('Error fetching document:', error);
+        }
+      }
+    };
+    fetchData();
+  }, [currentUser]);
+
+  const saveContentToFirestore = async (
+    newContent: string,
+    newTitles: string[],
+    newSubtitles: string[],
+    newTitleColors: string[],
+    newSubtitleColors: string[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    newLinks: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    newImageUrl: string | null,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    newVideos: any,
+
+  ) => {
+    try {
+      const dataInformation = collection(firestore, 'dataInformation');
+      await addDoc(dataInformation, { 
+        content: newContent,
+        titles: newTitles,
+        subtitles: newSubtitles,
+        titleColors: newTitleColors,
+        subtitleColors: newSubtitleColors,
+        linkInput: newLinks,
+        imageUrl: newImageUrl,
+        videoFileData: newVideos,
+        timestamp: new Date(),
+        userId: currentUser?.uid,
+      });
+      console.log('Content saved to Firestore');
+    } catch (error) {
+      console.error('Error saving document:', error);
+    }
+  };
+
+  const handlePublish = async () => {
+    const contentWithLinksAndColors = (await renderContentWithLinks())
+      .filter((element): element is JSX.Element => !!element)
+      .map((element) => {
+        if (typeof element === 'object' && element.type === 'img') {
+          return `<img src="${element.props.src}" alt="${element.props.alt}" style="max-width: '100%'; max-height: '300px';" />`;
+        } else if (typeof element === 'object' && element.type === 'video') {
+          return `<video controls style="max-width: '100%'; max-height: '300px';"><source src="${element.props.src}" type="video/mp4" /></video>`;
+        } else if (typeof element === 'object' && element.type === 'p') {
+          return `<p style="font-size: ${element.props.fontSize}; color: ${element.props.color};">${element.props.children}</p>`;
+        } else {
+          return element.props.children;
+        }
+      })
+      .join('');
+  
+    setPreviewModalOpen(false);
+    (contentWithLinksAndColors);
+  
+    saveContentToFirestore(
+      content,
+      titles,
+      subtitles,
+      titleColors,
+      subtitleColors,
+      linkInput, // Ensure linkInput is passed as an array
+      imageFileData, // Ensure imageFileData is passed as an array
+      videoFileData // Ensure videoFileData is passed as an array
+    );
+    
+
+    // dont forget to add ids
+  
+    setContent('');
+    setImageFileData(null);
+    setVideoFileData(null);
+    setTitles([]);
+    setSubtitles([]);
+    setTitleColors([]);
+    setSubtitleColors([]);
+    setLinkInput('');
+    setTitleInput('');
+    setSubtitleInput('');
+  };
+  
 
   const handleInsertLink = () => {
     setLinkModalOpen(true);
@@ -42,20 +171,86 @@ const WriteComp: React.FC = () => {
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     if (file) {
-      setVideoFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64data = reader.result as string;
+        setVideoFileData(base64data);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     if (file) {
-      setImageFile(file);
+      try {
+        const storageRef = ref(storage, file.name); // Get reference to the image file
+        await uploadBytes(storageRef, file); // Upload the image file to Firebase Storage
+        const imageUrl = await getDownloadURL(storageRef); // Get the download URL of the uploaded image
+        setImageFileData(imageUrl); // Store the download URL in state
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
     }
   };
+  
 
-  const handleAddNewBlock = () => {
-    setContent((prevContent) => prevContent + '\n[New Block]');
+  
+
+
+  const renderContentWithLinks = async (): Promise<JSX.Element[]> => {
+    if (!content) return [];
+  
+    const elements: JSX.Element[] = [];
+  
+    const lines = content.split('\n');
+    for (let index = 0; index < lines.length; index++) {
+      const line = lines[index];
+  
+      if (line.startsWith('[Link:')) {
+        const link = line.substring(6, line.length - 1);
+        elements.push(
+          <Text key={index} color="blue" textDecoration="underline" cursor="pointer" fontSize="md">
+            {link}
+          </Text>
+        );
+      } else if (line === '[Image]' && imageFileData) { // Update this line
+        try {
+          const imageURL = await getDownloadURL(ref(storage, imageFileData)); // Update this line
+          elements.push(<img key={index} src={imageURL} alt="Uploaded Image" style={{ maxWidth: '100%', maxHeight: '300px' }} />);
+        } catch (error) {
+          console.error('Error fetching image:', error);
+        }
+      } else if (line === '[Video]' && videoFileData) {
+        elements.push(<video key={index} controls style={{ maxWidth: '100%', maxHeight: '300px' }}><source src={videoFileData} type="video/mp4" /></video>);
+      } else {
+        // Assuming line is a paragraph or a title/subtitle reference
+        if (line.startsWith('[Title:') && titles.length > 0) {
+          const titleIndex = parseInt(line.substring(7, line.length - 1), 10);
+          if (titles[titleIndex]) {
+            elements.push(<Text key={index} fontSize="2xl" fontWeight="bold" color={titleColors[titleIndex]}>{titles[titleIndex]}</Text>);
+          }
+        } else if (line.startsWith('[Subtitle:') && subtitles.length > 0) {
+          const subtitleIndex = parseInt(line.substring(10, line.length - 1), 10);
+          if (subtitles[subtitleIndex]) {
+            elements.push(<Text key={index} fontSize="lg" color={subtitleColors[subtitleIndex]}>{subtitles[subtitleIndex]}</Text>);
+          }
+        } else {
+          // Paragraph
+          elements.push(<Text key={index} id={paragraphInputId} fontSize="sm">{line}</Text>);
+        }
+      }
+    }
+  
+    return elements;
   };
+  
+  
+
+  
+  
 
   const handleAddTitle = () => {
     setTitleModalOpen(true);
@@ -65,47 +260,8 @@ const WriteComp: React.FC = () => {
     setSubtitleModalOpen(true);
   };
 
-
-
   const handlePreview = () => {
-    setPreviewModalOpen(true); // Open preview modal
-  };
-
-  const handleLinkClick = (link: string) => {
-    window.open(link, '_blank');
-  };
-
-  const renderContentWithLinks = () => {
-    return content.split('\n').map((line, index) => {
-      if (line.startsWith('[Link:')) {
-        const link = line.substring(6, line.length - 1);
-        return (
-          <Text key={index} onClick={() => handleLinkClick(link)} color="blue" textDecoration="underline" cursor="pointer" fontSize="md">
-            {link}
-          </Text>
-        );
-      } else if (line === '[Image]' && imageFile) {
-        const imageUrl = URL.createObjectURL(imageFile);
-        return <img key={index} src={imageUrl} alt="Uploaded Image" style={{ maxWidth: '100%', maxHeight: '300px' }} />;
-      } else if (line === '[Video]' && videoFile) {
-        const videoUrl = URL.createObjectURL(videoFile);
-        return <video key={index} controls style={{ maxWidth: '100%', maxHeight: '300px' }}><source src={videoUrl} type="video/mp4" /></video>;
-      } else {
-        // Assuming line is a paragraph or a title/subtitle reference
-      // Assuming line is a paragraph or a title/subtitle reference
-if (line.startsWith('[Title:')) {
-  const titleIndex = parseInt(line.substring(7, line.length - 1), 10);
-  return <Text key={index} fontSize="2xl" fontWeight="bold" color={titleColors[titleIndex]}>{titles[titleIndex]}</Text>;
-} else if (line.startsWith('[Subtitle:')) {
-  const subtitleIndex = parseInt(line.substring(10, line.length - 1), 10);
-  return <Text key={index} fontSize="lg" color={subtitleColors[subtitleIndex]}>{subtitles[subtitleIndex]}</Text>;
-} else {
-  // Paragraph
-  return <Text key={index} fontSize="sm">{line}</Text>;
-}
-
-      }
-    });
+    setPreviewModalOpen(true);
   };
 
   const handleAddTitleConfirm = () => {
@@ -128,6 +284,13 @@ if (line.startsWith('[Title:')) {
     setSubtitleInput('');
   };
 
+  const linkInputId = uuidv4();
+  const titleInputId = uuidv4();
+  const subtitleInputId = uuidv4();
+  const imageInputId = uuidv4();
+  const videoInputId = uuidv4();
+  const paragraphInputId = uuidv4();
+
   return (
     <Box p={4}>
       <Text fontSize="xl" fontWeight="bold" mb={4} color="black">Tell us your STORY</Text>
@@ -146,13 +309,12 @@ if (line.startsWith('[Title:')) {
           <Icon as={FaPlusCircle} boxSize={6} />
         </MenuButton>
         <MenuList>
-           <MenuItem onClick={handleAddTitle}>Add Title</MenuItem>
+          <MenuItem onClick={handleAddTitle}>Add Title</MenuItem>
           <MenuItem onClick={handleAddSubtitle}>Add Subtitle</MenuItem>
           <MenuItem onClick={handleInsertLink}>Insert Link</MenuItem>
-          <MenuItem onClick={handleAddNewBlock}>Add New Block</MenuItem>  
-           <MenuDivider />
+          <MenuDivider />
           <MenuItem onClick={handleAddImage}><Icon as={FaCameraRetro} boxSize={6} /> Add Photo </MenuItem>
-          <MenuItem onClick={handleAddVideo}><Icon as={FaVideo} boxSize={6} /> Add Video </MenuItem>      
+          <MenuItem onClick={handleAddVideo}><Icon as={FaVideo} boxSize={6} /> Add Video </MenuItem>
         </MenuList>
       </Menu>
 
@@ -172,7 +334,7 @@ if (line.startsWith('[Title:')) {
         <ModalContent bg='white'>
           <ModalHeader>Add Link</ModalHeader>
           <ModalBody >
-            <Input value={linkInput} onChange={(e) => setLinkInput(e.target.value)} placeholder="Enter link URL" />
+            <Input id={linkInputId} value={linkInput} onChange={(e) => setLinkInput(e.target.value)} placeholder="Enter link URL" />
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={handleAddLink}>Add</Button>
@@ -181,12 +343,12 @@ if (line.startsWith('[Title:')) {
         </ModalContent>
       </Modal>
 
-      <Modal isCentered  isOpen={imageModalOpen} onClose={() => setImageModalOpen(false)}>
+      <Modal isCentered isOpen={imageModalOpen} onClose={() => setImageModalOpen(false)}>
         <ModalOverlay />
         <ModalContent bg='white'>
           <ModalHeader>Add Image</ModalHeader>
           <ModalBody>
-            <Input type="file" accept="image/*" onChange={handleImageChange} />
+            <Input id={imageInputId} type="file" accept="image/*" onChange={handleImageChange} />
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={() => {
@@ -198,12 +360,12 @@ if (line.startsWith('[Title:')) {
         </ModalContent>
       </Modal>
 
-      <Modal isCentered  isOpen={videoModalOpen} onClose={() => setVideoModalOpen(false)}>
+      <Modal isCentered isOpen={videoModalOpen} onClose={() => setVideoModalOpen(false)}>
         <ModalOverlay />
         <ModalContent bg='white'>
           <ModalHeader>Add Video</ModalHeader>
           <ModalBody>
-            <Input type="file" accept="video/*" onChange={handleVideoChange} />
+            <Input id={videoInputId} type="file" accept="video/*" onChange={handleVideoChange} />
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={() => {
@@ -220,23 +382,21 @@ if (line.startsWith('[Title:')) {
         <ModalContent bg='white'>
           <ModalHeader>Add Title</ModalHeader>
           <ModalBody>
-            <Input value={titleInput} onChange={(e) => setTitleInput(e.target.value)} placeholder="Enter title" />
+            <Input id={titleInputId} value={titleInput} onChange={(e) => setTitleInput(e.target.value)} placeholder="Enter title" />
             <Box mt={4}>
               <FormControl>
                 <FormLabel>Choose Title Color</FormLabel>
                 <Circle size="32px" bg={titleColors[titleColors.length - 1]} mb={2} />
                 <ChromePicker
-  color={titleColors[titleColors.length - 1]}
-  onChange={(color) => {
-    const newColor = color.hex;
-    setTitleColors((prevColors) => [
-      ...prevColors.slice(0, -1),
-      newColor,
-    ]);
-  }}
-/>
-
-
+                  color={titleColors[titleColors.length - 1]}
+                  onChange={(color) => {
+                    const newColor = color.hex;
+                    setTitleColors((prevColors) => [
+                      ...prevColors.slice(0, -1),
+                      newColor,
+                    ]);
+                  }}
+                />
               </FormControl>
             </Box>
           </ModalBody>
@@ -252,23 +412,22 @@ if (line.startsWith('[Title:')) {
         <ModalContent bg='white'>
           <ModalHeader>Add Subtitle</ModalHeader>
           <ModalBody>
-            <Input value={subtitleInput} onChange={(e) => setSubtitleInput(e.target.value)} placeholder="Enter subtitle" />
+            <Input id={subtitleInputId} value={subtitleInput} onChange={(e) => setSubtitleInput(e.target.value)} placeholder="Enter subtitle" />
             <Box mt={4}>
               <FormControl>
                 <FormLabel>Choose Subtitle Color</FormLabel>
                 <Circle size="32px" bg={subtitleColors[subtitleColors.length - 1]} mb={2} />
                 <ChromePicker
-  color={subtitleColors[subtitleColors.length - 1]}
-  onChange={(color) => {
-    const newColor = color.hex;
-    setSubtitleColors((prevColors) => [
-      ...prevColors.slice(0, -1),
-      newColor,
-    ]);
-  }}
-/>
-
-</FormControl>
+                  color={subtitleColors[subtitleColors.length - 1]}
+                  onChange={(color) => {
+                    const newColor = color.hex;
+                    setSubtitleColors((prevColors) => [
+                      ...prevColors.slice(0, -1),
+                      newColor,
+                    ]);
+                  }}
+                />
+              </FormControl>
             </Box>
           </ModalBody>
           <ModalFooter>
@@ -278,32 +437,29 @@ if (line.startsWith('[Title:')) {
         </ModalContent>
       </Modal>
 
-<Modal isCentered  isOpen={previewModalOpen} onClose={() => setPreviewModalOpen(false)} size="xl"> {/* Preview modal */}
+      
+      <Modal isCentered isOpen={previewModalOpen} onClose={() => setPreviewModalOpen(false)} size="xl">
   <ModalOverlay />
   <ModalContent bg='white'>
     <ModalHeader>Preview</ModalHeader>
     <ModalBody>
       <Box mt={4} shadow='md' p='10px'>
-        {renderContentWithLinks()}
+        {renderedContent.map((element, index) => (
+          <React.Fragment key={index}>{element}</React.Fragment>
+        ))}
       </Box>
     </ModalBody>
     <ModalFooter>
-      <Button colorScheme="blue" mr={3} onClick={() => {
-        console.log('Published:', content);
-        console.log('Uploaded image:', imageFile);
-        console.log('Uploaded video:', videoFile); 
-        setPreviewModalOpen(false); // Close preview modal
-        // Reset content state or perform other actions as needed
-        // setContent('');
-        // setImageFile(null);
-        // setVideoFile(null);
-      }}>Publish</Button>
+      <Button colorScheme="blue" mr={3} onClick={handlePublish}>
+        Publish
+      </Button>
       <Button onClick={() => setPreviewModalOpen(false)}>Cancel</Button>
     </ModalFooter>
   </ModalContent>
 </Modal>
+
     </Box>
   );
 }
 
-export default WriteComp
+export default WriteComp;

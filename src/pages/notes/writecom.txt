@@ -36,22 +36,21 @@ const WriteComp: React.FC = () => {
 
 const [links, setLinks] = useState<string[]>([]); 
 
-useEffect(() => {
-  const fetchContent = async () => {
-    const contentElements = await renderContentWithLinks();
-    setRenderedContent(contentElements);
-  };
+  useEffect(() => {
+    const fetchContent = async () => {
+      const contentElements = await renderContentWithLinks();
+      setRenderedContent(contentElements);
+    };
+  
+    fetchContent();
+  }, [content, imageFileData, videoFileData]); 
 
-  fetchContent();
-}, [content, imageFileData, videoFileData]); 
-
-useEffect(() => {
-  const unsubscribe = auth.onAuthStateChanged((user: User | null) => {
-    setCurrentUser(user);
-  });
-  return () => unsubscribe();
-}, []);
- 
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user: User | null) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,42 +79,43 @@ useEffect(() => {
     fetchData();
   }, [currentUser]);
 
+  const saveContentToFirestore = async (
+    newContent: string,
+    newTitles: string[],
+    newSubtitles: string[],
+    newTitleColors: string[],
+    newSubtitleColors: string[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    newLinks: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    newImageUrls: string[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    newVideos: any,
+    
 
-
-  const saveContentToFirestore = async () => {
-    if (currentUser) {
-      try {
-        const dataInfoCollectionRef = collection(firestore, 'datainformation');
-  
-        // Generate a unique ID for the new document
-        const newDocRef = doc(dataInfoCollectionRef);
-  
-        // Initialize data object with timestamp, userId, and content if available
-        const data: { [key: string]: any } = {
-          timestamp: new Date(),
-          userId: currentUser.uid,
-        };
-  
-        // Add fields only if they are not empty
-        if (content.trim() !== '') data.content = content;
-        if (titles.length > 0) data.titles = titles;
-        if (subtitles.length > 0) data.subtitles = subtitles;
-        if (titleColors.length > 0) data.titleColors = titleColors;
-        if (subtitleColors.length > 0) data.subtitleColors = subtitleColors;
-        if (links.length > 0) data.links = links;
-        if (videos.length > 0) data.videos = videos;
-        if (images.length > 0) data.images = images;
-  
-        // Set the document with the generated ID and data
-        await setDoc(newDocRef, data);
-        console.log('Content saved to Firestore successfully!');
-      } catch (error) {
-        console.error('Error saving content to Firestore:', error);
-      }
+  ) => {
+    try {
+      const dataInformation = collection(firestore, 'dataInformation');
+      const docRef = doc(dataInformation, currentUser?.uid);
+      await setDoc(docRef, { 
+        content: newContent,
+        titles: newTitles,
+        subtitles: newSubtitles,
+        titleColors: newTitleColors,
+        subtitleColors: newSubtitleColors,
+        linkInput: newLinks,
+        imageUrls: newImageUrls,
+        videoFileData: newVideos,
+        timestamp: new Date(),
+        userId: currentUser?.uid,
+         images,
+         videos,
+      });
+      console.log('Content saved to Firestore');
+    } catch (error) {
+      console.error('Error saving document:', error);
     }
   };
-  
-
 
   const handlePublish = async () => {
     const contentWithLinksAndColors = (await renderContentWithLinks())
@@ -135,12 +135,20 @@ useEffect(() => {
   
     setPreviewModalOpen(false);
     (contentWithLinksAndColors);
-    saveContentToFirestore();
-   
+  
     // Convert links array to a single string
     const linksString = links.join('\n');
   
-  
+    saveContentToFirestore(
+      content,
+      titles,
+      subtitles,
+      titleColors,
+      subtitleColors,
+      linksString, // Pass the links as a single string
+      imageFileData,
+      videoFileData
+    );
   
     setContent('');
     setImageFileData([""]);

@@ -146,79 +146,66 @@ export default TabContainer
 
 
 
-
 import React, { useEffect, useState } from 'react';
-import { Box, Tab, TabIndicator, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react'; // Import Box from Chakra UI
+import { ItemCard } from '..'; // Import your ItemCard component here
+import { firestore } from '../../firebase';
+import { collection, getDocs } from 'firebase/firestore';
+import { blogimg } from '../../assets';
 
 const TabContainer: React.FC = () => {
-  const [tabContent, setTabContent] = useState<{ [key: number]: string }>({});
-  const [activeTab, setActiveTab] = useState<number>(0);
+  const [data, setData] = useState<any[]>([]); // Define state to store fetched data
 
-  // Load content from localStorage on component mount
   useEffect(() => {
-    const savedData = localStorage.getItem('savedData');
-    if (savedData) {
-      const parsedData: {
-        content: string;
-        titles: string[];
-        subtitles: string[];
-        titleColors: string[];
-        subtitleColors: string[];
-      } = JSON.parse(savedData);
-      setTabContent({ 0: parsedData.content }); // Assuming content is for the first tab
-    }
-  }, []);
-
-  // Save content to localStorage whenever it changes
-  const saveContentToLocalStorage = (index: number, newContent: string) => {
-    const savedData = {
-      content: newContent,
-      titles: [], // You might want to save titles and subtitles for each tab separately if needed
-      subtitles: [],
-      titleColors: [],
-      subtitleColors: [],
-      paragraphs: newContent.split('\n').map((line, index) => {
-        return {
-          id: `paragraph-${index}`,
-          content: line
-        };
-      })
+    const fetchData = async () => {
+      try {
+        const datainformation = collection(firestore, 'datainformation');
+        const querySnapshot = await getDocs(datainformation);
+        const fetchedData = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          // Format the date to a string
+          const formattedDate = data.timestamp.toDate().toLocaleString(); // Example formatting
+          // Check if imageSrc exists, otherwise use default image
+          const imageSrc = data.imageSrc ? data.imageSrc : blogimg;
+          // Extract description from content excluding parts in square brackets
+          const description = data.content.replace(/\[(.*?)\]/g, '').trim();
+          // Map specific fields to match the props required by ItemCard
+          return {
+            id: doc.id, // Add document ID to the item
+            category: data.category || 'hive-hub', // Default category if not exists
+            date: formattedDate,
+            title: data.titles || 'Title', // Default title if not exists
+            description: description || 'No description', // Default description if not exists
+            author: data.author || { name: 'Micheell Crige', avatar: 'https://cdn.dribbble.com/users/699610/avatars/normal/607c294005d360e5f351832033bad05f.png?1699393852' }, // Default author if not exists
+            imageSrc: imageSrc, // Assign imageSrc
+          };
+        });
+        setData(fetchedData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
-    localStorage.setItem('savedData', JSON.stringify(savedData));
-  };
 
-  const handleTabChange = (index: number) => {
-    setActiveTab(index);
-  };
-
-  const handleContentChange = (index: number, content: string) => {
-    setTabContent(prevContent => ({
-      ...prevContent,
-      [index]: content
-    }));
-    saveContentToLocalStorage(index, content);
-  };
+    fetchData();
+  }, []);
 
   return (
     <Box className="">
-      <Tabs position='relative' variant='unstyled' index={activeTab} onChange={handleTabChange}>
-        <TabList borderBottomWidth='1px' py='5px' bg='white' color='black' zIndex='99' position={['static', 'static', 'sticky']} top={['auto', 'auto', '0']} right={['auto', 'auto', '0']}>
-          <Tab>Tab 1</Tab>
-          <Tab>Tab 2</Tab>
-          {/* Add more tabs as needed */}
-        </TabList>
-        <TabIndicator mt='-1.5px' height='2px' bg='black' borderRadius='1px' />
-        <TabPanels mt='1rem' overflowY="auto" maxHeight="calc(100vh - 100px)">
-          <TabPanel>
-            {/* Render content from state within a div */}
-            <div dangerouslySetInnerHTML={{ __html: tabContent[0] || '' }}></div>
-          </TabPanel>
-          <TabPanel>
-            <div dangerouslySetInnerHTML={{ __html: tabContent[1] || '' }}></div>
-          </TabPanel>
-          {/* Add more TabPanels as needed */}
-        </TabPanels>
-      </Tabs>
+      <Box display="flex" flexDirection="column">
+      
+        {data.map((item, index) => (
+          <ItemCard
+            key={index}
+            itemcardId={item.id} 
+            category={item.category}
+            date={item.date}
+            title={item.title}
+            description={item.description}
+            author={item.author}
+            imageSrc={item.imageSrc}
+          />
+        ))}
+      </Box>
     </Box>
   );
 };

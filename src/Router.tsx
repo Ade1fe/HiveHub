@@ -14,8 +14,8 @@ const Router = createBrowserRouter([
     element: <Homepage />,
   },
   {
-    path: "display/:id",
-    element: <DisplayPage />,
+    path: "/display/:itemId",
+    element: <DisplayPage  />,
   },
   {
     path: "admin",

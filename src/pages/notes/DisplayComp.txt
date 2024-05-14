@@ -1,0 +1,133 @@
+import React, { useEffect, useState } from 'react';
+import { Box } from '@chakra-ui/react';
+import { firestore } from '../../firebase'; // Import firestore
+import { doc, getDoc } from 'firebase/firestore';
+
+interface DisplayPageProps {
+  itemId: string; // Receive itemId as a prop
+}
+
+const DisplayComp: React.FC<DisplayPageProps> = ({ itemId }) => {
+  const [itemData, setItemData] = useState<any | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const itemRef = doc(firestore, 'datainformation', itemId);
+        const itemSnap = await getDoc(itemRef);
+        if (itemSnap.exists()) {
+          setItemData(itemSnap.data());
+        } else {
+          console.log('No such document!');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, [itemId]); // Fetch data when itemId changes
+
+  return (
+    <Box>
+      {/* Display fetched data */}
+      {itemData && (
+        <>
+          <h2>{itemData.title}</h2>
+          <p>{itemData.content}</p>
+          <p>Date: {itemData.timestamp?.toDate().toLocaleString()}</p>
+          <p>Author: {itemData.author?.name}</p>
+          {/* Add other fields you want to display */}
+        </>
+      )}
+    </Box>
+  );
+};
+
+
+
+export default DisplayComp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useEffect, useState } from 'react';
+// import { Box } from '@chakra-ui/react';
+// import { firestore } from '../../firebase'; // Import firestore
+// import { doc, getDoc } from 'firebase/firestore';
+
+
+// interface DisplayPageProps {
+//   itemId: string; // Receive itemId as a prop
+// }
+
+// const DisplayComp: React.FC<DisplayPageProps> = ({ itemId }) => {
+//   const [itemData, setItemData] = useState<any | null>(null);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         const itemRef = doc(firestore, 'datainformation', itemId);
+//         const itemSnap = await getDoc(itemRef);
+//         if (itemSnap.exists()) {
+//           setItemData(itemSnap.data());
+//         } else {
+//           console.log('No such document!');
+//         }
+//       } catch (error) {
+//         console.error('Error fetching data:', error);
+//       }
+//     };
+
+//     fetchData();
+//   }, [itemId]); // Fetch data when itemId changes
+
+//   return (
+//     <Box>
+//       {/* Display fetched data */}
+//       {itemData && (
+//         <>
+//           {/* Render titles */}
+//           {itemData.titles && itemData.titles.map((title: string, index: number) => (
+//             <h2 key={index}>{title}</h2>
+//           ))}
+//           {/* Render subtitles */}
+//           {itemData.subtitles && itemData.subtitles.map((subtitle: string, index: number) => (
+//             <h3 key={index}>{subtitle}</h3>
+//           ))}
+//           {/* Render content */}
+//           <p>{itemData.content}</p>
+//           {/* Render images */}
+//           {itemData.images && itemData.images.map((image: string, index: number) => (
+//             <img key={index} src={image} alt={`Image ${index}`} />
+//           ))}
+//           {/* Add other fields you want to display */}
+//         </>
+//       )}
+//     </Box>
+//   );
+// };
+
+// export default DisplayComp;
+
+
+
+
+

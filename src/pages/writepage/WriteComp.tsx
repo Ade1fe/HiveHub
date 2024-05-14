@@ -57,7 +57,7 @@ useEffect(() => {
     const fetchData = async () => {
       if (currentUser) {
         try {
-          const userDocRef = doc(firestore, 'coinbaseusers', currentUser.uid);
+          const userDocRef = doc(firestore, 'coinbaseusers', );
           const docSnapshot = await getDoc(userDocRef);
           if (docSnapshot.exists()) {
             const data = docSnapshot.data();
@@ -68,7 +68,7 @@ useEffect(() => {
             setSubtitleColors(data.subtitleColors || []);
             setLinkInput(data.linkInput || []);
             setImageFileData(data.imageFileData || []);
-            setImages(data.images || []);
+            setImages(data.images || []); 
             setVideoFileData(data.videoFileData || []);
             setVideos(data.videos || []);
           }
@@ -83,37 +83,66 @@ useEffect(() => {
 
 
   const saveContentToFirestore = async () => {
-    if (currentUser) {
-      try {
-        const dataInfoCollectionRef = collection(firestore, 'datainformation');
+    if (!currentUser) {
+      console.error('Error saving content to Firestore: User not authenticated.');
+      return;
+    }
   
-        // Generate a unique ID for the new document
-        const newDocRef = doc(dataInfoCollectionRef);
+    if (!content.trim()) {
+      console.error('Error saving content to Firestore: Content is empty.');
+      return;
+    }
   
-        // Initialize data object with timestamp, userId, and content if available
-        const data: { [key: string]: any } = {
-          timestamp: new Date(),
-          userId: currentUser.uid,
-        };
+    try {
+      const dataInfoCollectionRef = collection(firestore, 'datainformation');
   
-        // Add fields only if they are not empty
-        if (content.trim() !== '') data.content = content;
-        if (titles.length > 0) data.titles = titles;
-        if (subtitles.length > 0) data.subtitles = subtitles;
-        if (titleColors.length > 0) data.titleColors = titleColors;
-        if (subtitleColors.length > 0) data.subtitleColors = subtitleColors;
-        if (links.length > 0) data.links = links;
-        if (videos.length > 0) data.videos = videos;
-        if (images.length > 0) data.images = images;
+      // Generate a unique ID for the new document
+      const newDocRef = doc(dataInfoCollectionRef);
   
-        // Set the document with the generated ID and data
-        await setDoc(newDocRef, data);
-        console.log('Content saved to Firestore successfully!');
-      } catch (error) {
-        console.error('Error saving content to Firestore:', error);
+      // Ensure titleColors array has a valid color for each title
+      let finalTitleColors = titleColors;
+      if (!titles || titles.length === 0) {
+        console.warn('No titles provided. Setting default values.');
+        setTitles(['Untitled']);
       }
+      if (!titleColors || titleColors.length === 0) {
+        console.warn('No title colors provided. Setting default values.');
+        finalTitleColors = ['#000000']; // Default color: black
+      }
+      if (titles.length > titleColors.length) {
+        // If titles outnumber titleColors, assign default color for the missing titles
+        const defaultColor = '#000000'; // Default color: black
+        const missingColorsCount = titles.length - titleColors.length;
+        finalTitleColors = titleColors.concat(new Array(missingColorsCount).fill(defaultColor));
+        setTitleColors(finalTitleColors);
+      }
+  
+      // Initialize data object with timestamp and default values for other fields
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const data: { [key: string]: any } = {
+        timestamp: new Date(),
+        content: content.trim(),
+        titles: titles.length > 0 ? titles : null,
+        subtitles: subtitles && subtitles.length > 0 ? subtitles : null,
+        titleColors: finalTitleColors.length > 0 ? finalTitleColors : null,
+        subtitleColors: subtitleColors && subtitleColors.length > 0 ? subtitleColors : null,
+        links: links && links.length > 0 ? links : null,
+        videos: videos && videos.length > 0 ? videos : null,
+        images: images && images.length > 0 ? images : null,
+      };
+  
+      console.log('Data to be saved:', data); 
+  
+      // Set the document with the generated ID and data
+      await setDoc(newDocRef, data);
+      console.log('Content saved to Firestore successfully!');
+    } catch (error) {
+      console.error('Error saving content to Firestore:', error);
     }
   };
+  
+  
+
   
 
 
@@ -138,7 +167,7 @@ useEffect(() => {
     saveContentToFirestore();
    
     // Convert links array to a single string
-    const linksString = links.join('\n');
+    // const linksString = links.join('\n');
   
   
   
@@ -188,8 +217,6 @@ useEffect(() => {
   
 
 
-
- // Inside handleImageChange function
 const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
   const file = e.target.files ? e.target.files[0] : null;
   if (file) {
@@ -200,6 +227,9 @@ const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
       setImageFileData((prevData: string[]) => [...prevData, imageUrl]);
       // Append image placeholder to content
       setContent((prevContent) => prevContent + `\n[Image:${imageFileData.length}]`);
+      
+      // Add the image URL to the images state array
+      setImages((prevImages) => [...prevImages, imageUrl]);
     } catch (error) {
       console.error('Error uploading image:', error);
     }

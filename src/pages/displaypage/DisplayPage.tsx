@@ -1,13 +1,15 @@
 import { Box } from "@chakra-ui/react"
+import { DisplayComp } from ".."
+import { useParams } from "react-router-dom";
 
 
 const DisplayPage = () => {
+  const { itemId } = useParams<{ itemId: string }>();
   return (
     <Box>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit sapiente nemo tempora, odit eaque, ratione non, fugiat distinctio odio iusto illo itaque. Totam autem, qui debitis ducimus harum enim eligendi!
-      
+       <DisplayComp itemId={itemId || ''} />
     </Box>
-  )
+  );
 }
 
 export default DisplayPage

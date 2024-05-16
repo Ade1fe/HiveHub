@@ -1,0 +1,202 @@
+
+
+
+import React from 'react';
+import { Box, Image, Text, Link as ChakraLink } from '@chakra-ui/react';
+
+interface CategoryDataProps {
+  categories: string[];
+  content: string;
+  images: string[];
+  links: string[];
+  subtitleColors: string[];
+  subtitles: string[];
+  timestamp: Date | null;
+  titleColors: string[];
+  titles: string[];
+}
+
+interface RenderPageProps {
+  categoryData: CategoryDataProps;
+}
+
+const RenderPage: React.FC<RenderPageProps> = ({ categoryData }) => {
+  const {
+    content,
+    titles,
+    subtitles,
+    links,
+    images,
+    titleColors,
+    subtitleColors,
+  } = categoryData;
+
+  // Function to render the content
+  const renderContent = () => {
+    // Split the content string into an array of segments
+    const segments = content.split(/\[(.*?)\]/);
+
+    // Iterate through each segment and generate the corresponding JSX
+    return segments.map((segment: string | null | undefined, index: number) => {
+      if (segment == null) {
+        return null; // Skip processing null or undefined segments
+      }
+      
+      if (index % 2 === 0) {
+        // Even indices contain plain text
+        return <Text key={`segment-${index}`}>{segment}</Text>;
+      } else {
+        // Odd indices contain placeholders
+        const [type, idx] = segment.split(':');
+        switch (type) {
+          case 'Title':
+            return (
+              <Text key={`segment-${index}`} fontWeight="bold" fontSize="lg" color={titleColors[parseInt(idx)]}>
+                {titles[parseInt(idx)]}
+              </Text>
+            );
+          case 'Subtitle':
+            return (
+              <Text key={`segment-${index}`} fontWeight="medium" fontSize="md" color={subtitleColors[parseInt(idx)]}>
+                {subtitles[parseInt(idx)]}
+              </Text>
+            );
+          case 'Link':
+            return (
+              <ChakraLink key={`segment-${index}`} href={links[parseInt(idx)]}>
+                {links[parseInt(idx)]}
+              </ChakraLink>
+            );
+          case 'Image':
+            return <Image key={`segment-${index}`} src={images[parseInt(idx)]} mt={2} />;
+          default:
+            return null;
+        }
+      }
+    });
+  };
+
+  return (
+    <Box mt='40px' bg='gray.200'>
+      {/* Render category name */}
+      <Text fontWeight="bold" fontSize="xl">{categoryData.categories[0]}</Text>
+      {/* Render content */}
+      {renderContent()}
+    </Box>
+  );
+};
+
+export default RenderPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React from 'react';
+import { Box, Image, Text, Link as ChakraLink } from '@chakra-ui/react';
+
+interface CategoryDataProps {
+  categories: string[];
+  content: string;
+  images: string[];
+  links: string[];
+  subtitleColors: string[];
+  subtitles: string[];
+  timestamp: Date | null;
+  titleColors: string[];
+  titles: string[];
+}
+
+interface RenderPageProps {
+  categoryData: CategoryDataProps;
+}
+
+const RenderPage: React.FC<RenderPageProps> = ({ categoryData }) => {
+  const {
+    categories,
+    content,
+    images,
+    links,
+    subtitles,
+    subtitleColors,
+    titles,
+    titleColors,
+  } = categoryData;
+
+  const renderContent = () => {
+    const segments = content.split(/\[(.*?)\]/);
+
+    return segments.map((segment, index) => {
+      if (index % 2 === 0) {
+        return <Text key={`segment-${index}`}>{segment}</Text>;
+      } else {
+        const [type, idx] = segment.split(':');
+        switch (type) {
+          case 'Title':
+            return (
+              <Text
+                key={`segment-${index}`}
+                fontWeight="bold"
+                fontSize="lg"
+                color={titleColors[parseInt(idx)]}
+              >
+                {titles[parseInt(idx)]}
+              </Text>
+            );
+          case 'Subtitle':
+            return (
+              <Text
+                key={`segment-${index}`}
+                fontWeight="medium"
+                fontSize="md"
+                color={subtitleColors[parseInt(idx)]}
+              >
+                {subtitles[parseInt(idx)]}
+              </Text>
+            );
+          case 'Link':
+            return (
+              <ChakraLink key={`segment-${index}`} href={links[parseInt(idx)]}>
+                {links[parseInt(idx)]}
+              </ChakraLink>
+            );
+          case 'Image':
+            return (
+              <Box key={`segment-${index}`} mt={2}>
+                <Image src={images[parseInt(idx)]} />
+              </Box>
+            );
+          default:
+            return null;
+        }
+      }
+    });
+  };
+
+  return (
+    <Box mt="40px" bg="gray.200">
+      <Text fontWeight="bold" fontSize="xl">{categories[0]}</Text>
+      {renderContent()}
+    </Box>
+  );
+};
+
+export default RenderPage;

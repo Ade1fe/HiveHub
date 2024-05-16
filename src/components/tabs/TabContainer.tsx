@@ -1,6 +1,6 @@
-// TabContainer component
+
 import React, { useEffect, useState } from 'react';
-import { Box } from '@chakra-ui/react';
+import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'; // Import Tabs component
 import { ItemCard } from '..';
 import { firestore } from '../../firebase';
 import { collection, getDocs } from 'firebase/firestore';
@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 const TabContainer: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,7 +23,6 @@ const TabContainer: React.FC = () => {
           const title = data.titles ? data.titles[0] : 'Title'; 
           const imageSrc = data.images ? data.images[0] : blogimg; 
           const description = data.content.replace(/\[(.*?)\]/g, '').trim();
-          console.log('dat', data)
           return {
             id: doc.id,
             category: data.categories || 'hive-hub',
@@ -34,6 +34,9 @@ const TabContainer: React.FC = () => {
           };
         });
         setData(fetchedData);
+        if (fetchedData.length > 0) {
+          setSelectedCategory(fetchedData[0].category);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -44,28 +47,56 @@ const TabContainer: React.FC = () => {
 
   const handleItemClick = (itemId: string) => {
     navigate(`/display/${itemId}`); 
-    console.log("itemId",itemId);
   };
-  
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+  };
+
+  const groupedData: { [key: string]: any[] } = {};
+  data.forEach(item => {
+    if (!groupedData[item.category]) {
+      groupedData[item.category] = [];
+    }
+    groupedData[item.category].push(item);
+  });
 
   return (
-    <Box className="">
-      <Box display="flex" flexDirection="column">
-        {data.map((item, index) => (
-          <ItemCard
-            key={index}
-            itemcardId={item.id} 
-            category={item.category}
-            date={item.date}
-            title={item.title}
-            description={item.description}
-            author={item.author}
-            imageSrc={item.imageSrc}
-            onItemClick={() => handleItemClick(item.id)} // Pass the handleItemClick function as a prop
-          />
+   <Box className="">
+     <Tabs> 
+      <TabList shadow='sm'>
+        {Object.keys(groupedData).map(category => (
+          <Tab
+            key={category}
+            onClick={() => handleCategoryChange(category)}
+            _selected={selectedCategory === category ? { color: 'blue.500', borderBottomWidth: "2px" , borderBottomColor: "blue.500" } : undefined}
+          >
+            {category}
+          </Tab>
         ))}
-      </Box>
-    </Box>
+      </TabList>
+  
+      <TabPanels>
+        {Object.keys(groupedData).map(category => (
+          <TabPanel key={category}>
+            {groupedData[category].map((item, index) => (
+              <ItemCard
+                key={index}
+                itemcardId={item.id} 
+                category={item.category}
+                date={item.date}
+                title={item.title}
+                description={item.description}
+                author={item.author}
+                imageSrc={item.imageSrc}
+                onItemClick={() => handleItemClick(item.id)}
+              />
+            ))}
+          </TabPanel>
+        ))}
+      </TabPanels>
+    </Tabs>
+   </Box>
   );
 };
 

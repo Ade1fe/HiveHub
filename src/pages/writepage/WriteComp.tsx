@@ -118,6 +118,7 @@ const WriteComp: React.FC = () => {
       // Initialize data object with timestamp and default values for other fields
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const data: { [key: string]: any } = {
+        userId: currentUser.uid, 
         timestamp: new Date(),
         content: content.trim(),
         titles: titles.length > 0 ? titles : null,
@@ -127,7 +128,8 @@ const WriteComp: React.FC = () => {
         links: links && links.length > 0 ? links : null,
         videos: videos && videos.length > 0 ? videos : null,
         images: images && images.length > 0 ? images : null,
-        categories: categories && categories.length > 0 ? categories : null, // Include categories
+        categories: categories && categories.length > 0 ? categories : null, 
+       
       };
 
       console.log('Data to be saved:', data);
@@ -329,15 +331,6 @@ const WriteComp: React.FC = () => {
   };
 
 
-
-  // const handleAddCategory = () => {
-  //   setCategories((prevCategories) => [...prevCategories, categoryInput]);
-  //   setCategoryModalOpen(false);
-  //   setCategoryInput('');
-  
-  //   // Update the content with the added category
-  //   setContent((prevContent) => prevContent + `\n[Category]`);
-  // };
 
   const handleAddCategory = () => {
     // Check if the category is already present in the categories state

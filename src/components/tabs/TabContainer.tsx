@@ -19,13 +19,15 @@ const TabContainer: React.FC = () => {
         const fetchedData = querySnapshot.docs.map(doc => {
           const data = doc.data();
           const formattedDate = data.timestamp.toDate().toLocaleString();
-          const imageSrc = data.imageSrc ? data.imageSrc : blogimg;
+          const title = data.titles ? data.titles[0] : 'Title'; 
+          const imageSrc = data.images ? data.images[0] : blogimg; 
           const description = data.content.replace(/\[(.*?)\]/g, '').trim();
+          console.log('dat', data)
           return {
             id: doc.id,
-            category: data.category || 'hive-hub',
+            category: data.categories || 'hive-hub',
             date: formattedDate,
-            title: data.titles || 'Title',
+            title: title,
             description: description || 'No description',
             author: data.author || { name: 'Micheell Crige', avatar: 'https://cdn.dribbble.com/users/699610/avatars/normal/607c294005d360e5f351832033bad05f.png?1699393852' },
             imageSrc: imageSrc,

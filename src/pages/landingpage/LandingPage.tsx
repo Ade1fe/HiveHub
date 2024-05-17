@@ -52,6 +52,7 @@ const LandingPage = () => {
     },
   };
 
+  console.log(isSignInOpen);
 
   
   const getEmailSubtitleAndContext = (modalConfig: any) => {

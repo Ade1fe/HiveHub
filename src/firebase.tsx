@@ -31,6 +31,8 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+
+export { onAuthStateChanged }
 // // firebase.ts
 // import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics";

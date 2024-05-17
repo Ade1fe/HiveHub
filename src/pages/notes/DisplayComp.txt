@@ -73,3 +73,10 @@ const DisplayComp: React.FC<DisplayPageProps> = ({ itemId }) => {
 };
 
 export default DisplayComp;
+
+
+
+
+
+
+//firebase storage:bucket:set-cors cors.json

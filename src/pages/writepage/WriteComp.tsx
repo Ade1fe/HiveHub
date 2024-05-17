@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Icon, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Text, Textarea, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, Circle,  FormControl, FormLabel } from '@chakra-ui/react';
 import {  FaPlusCircle,  } from 'react-icons/fa';
@@ -7,10 +5,8 @@ import { ChromePicker } from 'react-color';
 import { v4 as uuidv4 } from 'uuid';
 import { auth, firestore, storage } from '../../firebase';
 import { User } from 'firebase/auth';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { addDoc, collection, doc, getDoc, setDoc } from 'firebase/firestore';
-import 'firebase/firestore';
-import {  getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 const WriteComp: React.FC = () => {
   const [content, setContent] = useState('');
@@ -33,31 +29,34 @@ const WriteComp: React.FC = () => {
   const [images, setImages] = useState<string[]>([]);
   const [videos, setVideos] = useState<string[]>([]);
   const [imageFileData, setImageFileData] = useState<string[]>([]);
+  const [links, setLinks] = useState<string[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [categoryInput, setCategoryInput] = useState('');
+  const [categoryAdded, setCategoryAdded] = useState(false);
 
-const [links, setLinks] = useState<string[]>([]); 
+  useEffect(() => {
+    const fetchContent = async () => {
+      const contentElements = await renderContentWithLinks();
+      setRenderedContent(contentElements);
+    };
 
-useEffect(() => {
-  const fetchContent = async () => {
-    const contentElements = await renderContentWithLinks();
-    setRenderedContent(contentElements);
-  };
+    fetchContent();
+  }, [content, imageFileData, videoFileData]);
 
-  fetchContent();
-}, [content, imageFileData, videoFileData]); 
-
-useEffect(() => {
-  const unsubscribe = auth.onAuthStateChanged((user: User | null) => {
-    setCurrentUser(user);
-  });
-  return () => unsubscribe();
-}, []);
- 
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user: User | null) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       if (currentUser) {
         try {
-          const userDocRef = doc(firestore, 'coinbaseusers', );
+          // const userDocRef = doc(firestore, 'coinbaseusers', currentUser.uid );
+          const userDocRef = doc(firestore, 'coinbaseusers', 'dataInformation');
           const docSnapshot = await getDoc(userDocRef);
           if (docSnapshot.exists()) {
             const data = docSnapshot.data();
@@ -68,9 +67,10 @@ useEffect(() => {
             setSubtitleColors(data.subtitleColors || []);
             setLinkInput(data.linkInput || []);
             setImageFileData(data.imageFileData || []);
-            setImages(data.images || []); 
+            setImages(data.images || []);
             setVideoFileData(data.videoFileData || []);
             setVideos(data.videos || []);
+            setCategories(data.categories || []); // Retrieve categories
           }
         } catch (error) {
           console.error('Error fetching document:', error);
@@ -80,25 +80,23 @@ useEffect(() => {
     fetchData();
   }, [currentUser]);
 
-
-
   const saveContentToFirestore = async () => {
     if (!currentUser) {
       console.error('Error saving content to Firestore: User not authenticated.');
       return;
     }
-  
+
     if (!content.trim()) {
       console.error('Error saving content to Firestore: Content is empty.');
       return;
     }
-  
+
     try {
       const dataInfoCollectionRef = collection(firestore, 'datainformation');
-  
+
       // Generate a unique ID for the new document
       const newDocRef = doc(dataInfoCollectionRef);
-  
+
       // Ensure titleColors array has a valid color for each title
       let finalTitleColors = titleColors;
       if (!titles || titles.length === 0) {
@@ -116,10 +114,11 @@ useEffect(() => {
         finalTitleColors = titleColors.concat(new Array(missingColorsCount).fill(defaultColor));
         setTitleColors(finalTitleColors);
       }
-  
+
       // Initialize data object with timestamp and default values for other fields
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const data: { [key: string]: any } = {
+        userId: currentUser.uid, 
         timestamp: new Date(),
         content: content.trim(),
         titles: titles.length > 0 ? titles : null,
@@ -129,10 +128,12 @@ useEffect(() => {
         links: links && links.length > 0 ? links : null,
         videos: videos && videos.length > 0 ? videos : null,
         images: images && images.length > 0 ? images : null,
+        categories: categories && categories.length > 0 ? categories : null, 
+       
       };
-  
-      console.log('Data to be saved:', data); 
-  
+
+      console.log('Data to be saved:', data);
+
       // Set the document with the generated ID and data
       await setDoc(newDocRef, data);
       console.log('Content saved to Firestore successfully!');
@@ -140,11 +141,6 @@ useEffect(() => {
       console.error('Error saving content to Firestore:', error);
     }
   };
-  
-  
-
-  
-
 
   const handlePublish = async () => {
     const contentWithLinksAndColors = (await renderContentWithLinks())
@@ -161,16 +157,11 @@ useEffect(() => {
         }
       })
       .join('');
-  
+
     setPreviewModalOpen(false);
-    (contentWithLinksAndColors);
     saveContentToFirestore();
-   
-    // Convert links array to a single string
-    // const linksString = links.join('\n');
-  
-  
-  
+    (contentWithLinksAndColors);
+
     setContent('');
     setImageFileData([""]);
     setVideoFileData(null);
@@ -183,9 +174,8 @@ useEffect(() => {
     setImages([]);
     setSubtitleInput('');
     setVideos([]);
+    setCategories([]); // Clear categories after publishing
   };
-  
-  
 
   const handleInsertLink = () => {
     setLinkModalOpen(true);
@@ -197,9 +187,6 @@ useEffect(() => {
     setLinkInput('');
     setLinkModalOpen(false);
   };
-
-
- 
 
   const handleVideoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
@@ -214,100 +201,95 @@ useEffect(() => {
       }
     }
   };
-  
 
-
-const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files ? e.target.files[0] : null;
-  if (file) {
-    try {
-      const storageRef = ref(storage, file.name);
-      await uploadBytes(storageRef, file);
-      const imageUrl = await getDownloadURL(storageRef);
-      setImageFileData((prevData: string[]) => [...prevData, imageUrl]);
-      // Append image placeholder to content
-      setContent((prevContent) => prevContent + `\n[Image:${imageFileData.length}]`);
-      
-      // Add the image URL to the images state array
-      setImages((prevImages) => [...prevImages, imageUrl]);
-    } catch (error) {
-      console.error('Error uploading image:', error);
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    if (file) {
+      try {
+        const storageRef = ref(storage, file.name);
+        await uploadBytes(storageRef, file);
+        const imageUrl = await getDownloadURL(storageRef);
+        setImageFileData((prevData: string[]) => [...prevData, imageUrl]);
+        setContent((prevContent) => prevContent + `\n[Image:${imageFileData.length}]`);
+        setImages((prevImages) => [...prevImages, imageUrl]);
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
     }
-  }
-};
+  };
 
-  
-  
+  const renderContentWithLinks = async (): Promise<JSX.Element[]> => {
+    if (!content) return [];
 
-const renderContentWithLinks = async (): Promise<JSX.Element[]> => {
-  if (!content) return [];
+    const elements: JSX.Element[] = [];
+    let currentTitleIndex = -1; // Initialize the current title index
 
-  const elements: JSX.Element[] = [];
-  let currentTitleIndex = -1; // Initialize the current title index
+    const lines = content.split('\n');
+    for (let index = 0; index < lines.length; index++) {
+      const line = lines[index];
 
-  const lines = content.split('\n');
-  for (let index = 0; index < lines.length; index++) {
-    const line = lines[index];
-
-    if (line.startsWith('[Link:')) {
-      const linkIndex = parseInt(line.substring(6, line.length - 1), 10);
-      if (links[linkIndex]) {
+      if (line.startsWith('[Link:')) {
+        const linkIndex = parseInt(line.substring(6, line.length - 1), 10);
+        if (links[linkIndex]) {
+          elements.push(
+            <Text key={index} color="blue" textDecoration="underline" cursor="pointer" fontSize="md">
+              {links[linkIndex]}
+            </Text>
+          );
+        }
+      } else if (line.startsWith('[Title:')) {
+        currentTitleIndex = parseInt(line.substring(7, line.length - 1), 10);
         elements.push(
-          <Text key={index} color="blue" textDecoration="underline" cursor="pointer" fontSize="md">
-            {links[linkIndex]}
+          <Text key={index} fontSize="2xl" fontWeight="bold" color={titleColors[currentTitleIndex]}>
+            {titles[currentTitleIndex]}
           </Text>
         );
-      }
-    } else if (line.startsWith('[Title:')) {
-      currentTitleIndex = parseInt(line.substring(7, line.length - 1), 10);
-      elements.push(
-        <Text key={index} fontSize="2xl" fontWeight="bold" color={titleColors[currentTitleIndex]}>
-          {titles[currentTitleIndex]}
-        </Text>
-      );
-    } else if (line.startsWith('[Subtitle:')) {
-      const subtitleIndex = parseInt(line.substring(10, line.length - 1), 10);
-      if (subtitles[subtitleIndex]) {
+      } else if (line.startsWith('[Subtitle:')) {
+        const subtitleIndex = parseInt(line.substring(10, line.length - 1), 10);
+        if (subtitles[subtitleIndex]) {
+          elements.push(
+            <Text key={index} fontSize="lg" color={subtitleColors[subtitleIndex]}>
+              {subtitles[subtitleIndex]}
+            </Text>
+          );
+        }
+      } else if (line.startsWith('[Image:') && imageFileData) {
+        const imageIndex = parseInt(line.substring(7, line.length - 1), 10);
+        try {
+          const imageUrl = imageFileData[imageIndex];
+          elements.push(
+            <img key={index} src={imageUrl} alt={`Image ${imageIndex}`} style={{ maxWidth: '100%', maxHeight: '300px' }} />
+          );
+        } catch (error) {
+          console.error('Error fetching image:', error);
+        }
+      } else if (line === '[Video]' && currentTitleIndex !== -1 && videoFileData) {
+        try {
+          const videoUrl = videos[currentTitleIndex]; // Get the corresponding video URL
+          elements.push(
+            <video key={index} controls style={{ maxWidth: '100%', maxHeight: '300px' }}>
+              <source src={videoUrl} type="video/mp4" />
+            </video>
+          );
+        } catch (error) {
+          console.error('Error fetching video:', error);
+        }
+      } else if (line === '[Category]' && categories.length > 0) {
+        // Render categories if available
         elements.push(
-          <Text key={index} fontSize="lg" color={subtitleColors[subtitleIndex]}>
-            {subtitles[subtitleIndex]}
+          <Text key={index} fontSize="md" color="gray.500">
+            {categories.join(', ')}
           </Text>
         );
+      } 
+      else {
+        // Treat each line as a paragraph
+        elements.push(<Text key={index} fontSize="sm">{line}</Text>);
       }
-    } else if (line.startsWith('[Image:') && imageFileData) {
-      const imageIndex = parseInt(line.substring(7, line.length - 1), 10);
-      try {
-        const imageUrl = imageFileData[imageIndex];
-        elements.push(
-          <img key={index} src={imageUrl} alt={`Image ${imageIndex}`} style={{ maxWidth: '100%', maxHeight: '300px' }} />
-        );
-      } catch (error) {
-        console.error('Error fetching image:', error);
-      }
-    } else if (line === '[Video]' && currentTitleIndex !== -1 && videoFileData) {
-      try {
-        const videoUrl = videos[currentTitleIndex]; // Get the corresponding video URL
-        elements.push(
-          <video key={index} controls style={{ maxWidth: '100%', maxHeight: '300px' }}>
-            <source src={videoUrl} type="video/mp4" />
-          </video>
-        );
-      } catch (error) {
-        console.error('Error fetching video:', error);
-      }
-    } else {
-      // Treat each line as a paragraph
-      elements.push(<Text key={index} fontSize="sm">{line}</Text>);
     }
-  }
 
-  return elements;
-};
-
-
-
-  
-  
+    return elements;
+  };
 
   const handleAddTitle = () => {
     setTitleModalOpen(true);
@@ -319,11 +301,10 @@ const renderContentWithLinks = async (): Promise<JSX.Element[]> => {
 
   const handlePreview = () => {
     setContent(
-      content 
+      content
     );
     setPreviewModalOpen(true);
   };
-  
 
   const handleAddTitleConfirm = () => {
     const newTitles = [...titles, titleInput];
@@ -345,12 +326,38 @@ const renderContentWithLinks = async (): Promise<JSX.Element[]> => {
     setSubtitleInput('');
   };
 
+  const handleCategoryInput = () => {
+    setCategoryModalOpen(true);
+  };
+
+
+
+  const handleAddCategory = () => {
+    // Check if the category is already present in the categories state
+    if (!categories.includes(categoryInput.trim())) {
+      // If not present, add the category
+      setCategories((prevCategories) => [...prevCategories, categoryInput.trim()]);
+      setCategoryModalOpen(false);
+      setCategoryInput('');
+    
+      // Update the content with the added category
+      setContent((prevContent) => prevContent + `\n[Category]`);
+      // Disable the "Add Category" button after adding the category
+      setCategoryAdded(true);
+    } else {
+      // If the category is already present, show an alert or handle it accordingly
+      alert("Category already exists!");
+    }
+  };
+  
+
+  
   const linkInputId = uuidv4();
   const titleInputId = uuidv4();
   const subtitleInputId = uuidv4();
   const imageInputId = uuidv4();
   const videoInputId = uuidv4();
-  // const paragraphInputId = uuidv4();
+  const categoryInputId = uuidv4();
 
   return (
     <Box p={4}>
@@ -373,6 +380,7 @@ const renderContentWithLinks = async (): Promise<JSX.Element[]> => {
           <MenuItem onClick={handleAddTitle}>Add Title</MenuItem>
           <MenuItem onClick={handleAddSubtitle}>Add Subtitle</MenuItem>
           <MenuItem onClick={handleInsertLink}>Insert Link</MenuItem>
+          <MenuItem onClick={handleCategoryInput}>Add Category</MenuItem> 
           <MenuDivider />
           <MenuItem onClick={() => setImageModalOpen(true)}>Add Image</MenuItem>
           <MenuItem onClick={() => setVideoModalOpen(true)}>Add Video</MenuItem>
@@ -498,67 +506,42 @@ const renderContentWithLinks = async (): Promise<JSX.Element[]> => {
         </ModalContent>
       </Modal>
 
-      
-      <Modal isCentered isOpen={previewModalOpen} onClose={() => setPreviewModalOpen(false)} size="xl">
-  <ModalOverlay />
-  <ModalContent bg='white'>
-    <ModalHeader>Preview</ModalHeader>
-    <ModalBody>
-      <Box mt={4} shadow='md' p='10px'>
-        {renderedContent.map((element, index) => (
-          <React.Fragment key={index}>{element}</React.Fragment>
-        ))}
-      </Box>
-    </ModalBody>
-    <ModalFooter>
-      <Button colorScheme="blue" mr={3} onClick={handlePublish}>
-        Publish
-      </Button>
-      <Button onClick={() => setPreviewModalOpen(false)}>Cancel</Button>
-    </ModalFooter>
-  </ModalContent>
-</Modal>
+      <Modal isCentered isOpen={categoryModalOpen} onClose={() => setCategoryModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent bg='white'>
+          <ModalHeader>Add Category</ModalHeader>
+          <ModalBody>
+            <Input
+              id={categoryInputId}
+              value={categoryInput}
+              onChange={(e) => setCategoryInput(e.target.value)}
+              placeholder="Enter category"
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleAddCategory} disabled={categoryAdded}>
+              Add
+            </Button>
+            <Button onClick={() => setCategoryModalOpen(false)}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
+      <Modal isCentered isOpen={previewModalOpen} onClose={() => setPreviewModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent bg='white'>
+          <ModalHeader>Preview</ModalHeader>
+          <ModalBody>
+            {renderedContent}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handlePublish}>Publish</Button>
+            <Button onClick={() => setPreviewModalOpen(false)}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
-}
+};
 
 export default WriteComp;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

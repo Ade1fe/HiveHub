@@ -7,6 +7,8 @@ import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
 // import reader2 from '../../assets/woman-using-digital-tablet-technology.png'
+import { facebookSignUp } from './../auth/facebook/FacebookAuth';
+import { googleSignUp } from './../auth/google/GoogleAuth';
 
 const LandingPage = () => {
   const initialWidth = useBreakpointValue({ base: '25px', md: '35px' });
@@ -18,18 +20,77 @@ const LandingPage = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSignInOpen, setIsSignInOpen] = useState(false);
+  const [showEmailSignUp, setShowEmailSignUp] = useState(false);
+  const [modalContext, setModalContext] = useState("");
 
   const toggleModal = (configType: string) => {
-    setIsSignInOpen(configType === 'signin');
-    setIsModalOpen(true);
+    if (configType === 'signin') {
+      setIsSignInOpen(true);
+      setIsModalOpen(true);
+      setModalContext('signin');
+      setShowEmailSignUp(false);
+    } else if (configType === 'signup') {
+      setIsSignInOpen(false);
+      setIsModalOpen(true);
+      setModalContext('signup');
+      setShowEmailSignUp(false);
+    } else if (configType === 'emailSignUp') {
+      setIsSignInOpen(false);
+      setIsModalOpen(true);
+      // setModalContext('emailSignUp');
+      setShowEmailSignUp(true);
+    }
   };
+
+  const emailConfig = {
+    // title: {modalContext === 'signin' ? 'Sign in with Email' : ''},
+    getSubtitleAndContext: (modalConfig: any) => {
+      const { subtitleText, modalContext } = getEmailSubtitleAndContext(modalConfig);
+      subtitleText: subtitleText;
+      modalContext: modalContext;
+      return { subtitleText, modalContext };
+    },
+  };
+
+  console.log(isSignInOpen);
+
+  
+  const getEmailSubtitleAndContext = (modalConfig: any) => {
+    console.log("Modal Config in getSubtitleAndContext:", modalConfig);
+      let subtitleText = '';
+      let modalContext = '';
+
+      switch (modalConfig) {
+        case signInConfig:
+          subtitleText = 'Enter the email address associated with your account, and we’ll send a link to your inbox.';
+          modalContext = 'All sign in options';
+          break;
+        case signUpConfig:
+          subtitleText = 'Enter your email address to create an account.';
+          modalContext = 'All sign up options';
+          break;
+        default:
+          // Default values or error handling
+          subtitleText = '';
+          modalContext = '';
+          break;
+      }
+
+      return { subtitleText, modalContext };
+  }
+
+  const emailSignUp = () => {
+    toggleModal('emailSignUp')
+    setShowEmailSignUp(true);
+    // console.log(emailConfig);
+  }
 
   const signUpConfig = {
     title: 'Come aboard Hivehub',
     buttons: [
-      { onClick: () => {}, icon: <FcGoogle className='google' />, text: 'Google', },
-      { onClick: () => {}, icon: <BsFacebook className='facebook' />, text: 'Facebook', },
-      { onClick: () => {}, icon: <HiOutlineMail className='email' />, text: 'Email', },
+      { onClick: googleSignUp, icon: <FcGoogle className='google' />, text: 'Google', },
+      { onClick: facebookSignUp, icon: <BsFacebook className='facebook' />, text: 'Facebook', },
+      { onClick: emailSignUp, icon: <HiOutlineMail className='email' />, text: 'Email', },
     ],
     texts: [
       { content: 'Already have an account? <span style="color: blue; font-weight: bold; cursor: pointer;">Sign in</span>', textStyles: { fontSize: '16px' }, configType: 'signin' },
@@ -40,15 +101,17 @@ const LandingPage = () => {
   const signInConfig = {
     title: 'Welcome back.',
     buttons: [
-      { onClick: () => {}, icon: <FcGoogle className='google' />, text: 'Google', },
-      { onClick: () => {}, icon: <BsFacebook className='facebook' />, text: 'Facebook', },
-      { onClick: () => {}, icon: <HiOutlineMail className='email' />, text: 'Email', },
+      { onClick: googleSignUp, icon: <FcGoogle className='google' />, text: 'Google', },
+      { onClick: facebookSignUp, icon: <BsFacebook className='facebook' />, text: 'Facebook', },
+      { onClick: emailSignUp, icon: <HiOutlineMail className='email' />, text: 'Email', },
     ],
     texts: [
       { content: 'No account? <span style="color: green; font-weight: bold; cursor: pointer;">Create one</span>', textStyles: { fontSize: '16px' }, configType: 'signup' },
       { content: 'Click “Sign up” to agree to Hivehub’s <span style="text-decoration: underline; cursor: pointer; ">Terms of Service</span> and acknowledge that Hivehub <span style="text-decoration: underline; cursor: pointer; ">Privacy Policy</span> applies to you.', textStyles: { padding: '8px 5px', marginTop: '20px', width: '90% 70% ', fontSize: '10px 14px' } },
     ]
   }
+
+  const { subtitleText } = getEmailSubtitleAndContext(modalContext === "signin" ? signInConfig : modalContext === "signup" ? signUpConfig : emailConfig);
 
   return (
     <Box display='flex' flexDir='column' w='100%' alignItems='center' justifyContent='center' gap={['20px', '30px']}  maxW="1440px" mx='auto' px={[4,4,4,4,2,0]} >
@@ -60,19 +123,19 @@ const LandingPage = () => {
 
         <Box w={[ '100%', '75%' ]} display='flex' flexDir='column' gap='10px' className="text">
 
-        <Text as='h3' fontSize={['40px', '50px']} fontWeight='600' >
-  Embark on an <Text as='span' color='blue.900'>Adventure</Text>
-</Text>
-<Text as='p' fontSize='larger' fontWeight='500' textColor='GrayText' >
-  Dive into Captivating Stories, Discover Hidden Insights, and Immerse Yourself in Endless Entertainment!
-</Text>
-<Text as='p' fontSize='large' fontWeight='400' textColor='GrayText' >
-  Ready to explore? Our platform offers thrilling adventures, insightful narratives, and captivating entertainment for all. Join our community and ignite your imagination. Your journey starts here.
-</Text>
+          <Text as='h3' fontSize={['40px', '50px']} fontWeight='600' >
+            Embark on an <Text as='span' color='blue.900'>Adventure</Text>
+          </Text>
+          <Text as='p' fontSize='larger' fontWeight='500' textColor='GrayText' >
+            Dive into Captivating Stories, Discover Hidden Insights, and Immerse Yourself in Endless Entertainment!
+          </Text>
+          <Text as='p' fontSize='large' fontWeight='400' textColor='GrayText' >
+            Ready to explore? Our platform offers thrilling adventures, insightful narratives, and captivating entertainment for all. Join our community and ignite your imagination. Your journey starts here.
+          </Text>
 
 
 
-          <Button w={['120px', '150px']} px='5px' borderRadius='250px' variant='solid' bg='black' color='white' colorScheme='black' fontWeight='400' cursor='pointer' onClick={() => toggleModal('reading')} mt='1rem'>Start reading</Button>
+          <Button w={['120px', '150px']} px='5px' borderRadius='250px' variant='solid' bg='black' color='white' colorScheme='black' fontWeight='400' cursor='pointer' onClick={() => toggleModal('signup')} mt='1rem'>Start reading</Button>
         </Box>
 
         <AnimatePresence>
@@ -95,7 +158,7 @@ const LandingPage = () => {
         <motion.div initial={{ opacity: 1, x: -20, background: '#ee6055', clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }} animate={{ opacity: 0.5, x: 0, background: '#fbff12' }} exit={{ opacity: 1, x: -20, background: '#662e9b' }} transition={{ type: 'tween', duration: 1.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="star1"></motion.div>
       </Box>
       
-      <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} modalConfig={isSignInOpen ? signInConfig : signUpConfig} toggleModal={toggleModal} />
+      <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} modalConfig={modalContext === "signin" ? signInConfig : modalContext === "signup" ? signUpConfig : emailConfig} toggleModal={toggleModal} facebookSignUp={facebookSignUp} googleSignUp={googleSignUp} showEmailSignUp={showEmailSignUp} emailConfig={emailConfig} modalContext={modalContext} subtitleText={subtitleText} />
 
       <Footer />
     </Box>

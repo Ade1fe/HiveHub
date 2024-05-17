@@ -5,7 +5,7 @@ import { ChromePicker } from 'react-color';
 import { v4 as uuidv4 } from 'uuid';
 import { auth, firestore, storage } from '../../firebase';
 import { User } from 'firebase/auth';
-import { addDoc, collection, doc, getDoc, setDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 const WriteComp: React.FC = () => {

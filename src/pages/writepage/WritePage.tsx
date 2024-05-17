@@ -1,19 +1,14 @@
-import { Box } from "@chakra-ui/react";
-import { WriteComp } from "..";
-import { Footer, Header } from "../../components";
-
+import React from 'react';
+import { MainLayout, WriteComp } from '..';
 
 const WritePage: React.FC = () => {
-  
+ 
 
   return (
-    <Box>
-      <Header />
+    <MainLayout>
       <WriteComp />
-      <Footer />
-    
-    </Box>
+    </MainLayout>
   );
-}
+};
 
 export default WritePage;

@@ -5,8 +5,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 
-// const navigate = useNavigate();
-
 //  GOOGLE SIGNUP WITH POPUP FUNCTIONALITY
 export const googleSignUp = async () => {
   try {
@@ -31,13 +29,6 @@ const storeUserData = async (user: any, provider: string) => {
     let userData: any;
 
     if (!userDoc.exists()) {
-      // const checkEmailExists = await emailExists(user.email);
-
-      // if (checkEmailExists) {
-      //   console.log('Email already exists');
-      //   return;
-      // }
-
       userData = {
         username: getFirstName(user.displayName),
         email: user.email,
@@ -56,15 +47,6 @@ const storeUserData = async (user: any, provider: string) => {
     console.log('Invalid User: ', err);
   }
 }
-
-
-//  CHECKING IF USER/READER IS ALREADY SIGNED UP
-// const emailExists = async (email: any) => {
-//   const userEmail = collection(firestore, 'Reader');
-//   const emailQuery = query(userEmail, where('email', '==', email));
-//   const result = await getDocs(emailQuery);
-//   return !result.empty;
-// };
 
 
 //  GETTING THE USER/READER'S FIRSTNAME FOR USERNAME

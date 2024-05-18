@@ -47,7 +47,7 @@ function App() {
 
   return (
     <>
-          <ChakraBaseProvider theme={theme}>
+      <ChakraBaseProvider theme={theme}>
         <RouterProvider router={router}></RouterProvider>
       </ChakraBaseProvider>
     </>

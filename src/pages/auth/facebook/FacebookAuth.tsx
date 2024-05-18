@@ -20,6 +20,7 @@ const facebookSignUp = async () => {
 
 //  SIGNING UP USER/READER AND SAVING THEIR DATA
 const storeUserData = async (user: any, provider: string) => {
+
   try {
     const userDocRef = doc(firestore, 'Reader', user.uid);
     const userDoc = await getDoc(userDocRef);
@@ -41,7 +42,6 @@ const storeUserData = async (user: any, provider: string) => {
       await setDoc(userDocRef, userData);
       await sendEmailVerification(user);
       console.log('Sign up successful and email verification sent');
-
     } 
     else {
       console.log('Sign In successful');

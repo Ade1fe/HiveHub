@@ -47,7 +47,6 @@ const storeUserData = async (user: any, provider: string) => {
       await setDoc(userDocRef, userData);
       await sendEmailVerification(user);
       console.log('Sign up successful and email verification sent');
-
     }
     else {
       console.log('Sign In successful')

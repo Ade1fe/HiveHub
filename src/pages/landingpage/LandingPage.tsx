@@ -88,8 +88,8 @@ const LandingPage = () => {
   const signUpConfig = {
     title: 'Come aboard Hivehub',
     buttons: [
-      { onClick: googleSignUp, icon: <FcGoogle className='google' />, text: 'Google', },
-      { onClick: facebookSignUp, icon: <BsFacebook className='facebook' />, text: 'Facebook', },
+      { onClick: googleSignUp, icon: <FcGoogle className='google' />, text: 'Google', setAuthMethod: 'google', },
+      { onClick: facebookSignUp, icon: <BsFacebook className='facebook' />, text: 'Facebook', setAuthMethod: 'facebook', },
       { onClick: emailSignUp, icon: <HiOutlineMail className='email' />, text: 'Email', },
     ],
     texts: [
@@ -101,8 +101,8 @@ const LandingPage = () => {
   const signInConfig = {
     title: 'Welcome back.',
     buttons: [
-      { onClick: googleSignUp, icon: <FcGoogle className='google' />, text: 'Google', },
-      { onClick: facebookSignUp, icon: <BsFacebook className='facebook' />, text: 'Facebook', },
+      { onClick: googleSignUp, icon: <FcGoogle className='google' />, text: 'Google', setAuthMethod: 'google', },
+      { onClick: facebookSignUp, icon: <BsFacebook className='facebook' />, text: 'Facebook', setAuthMethod: 'facebook', },
       { onClick: emailSignUp, icon: <HiOutlineMail className='email' />, text: 'Email', },
     ],
     texts: [
@@ -159,7 +159,8 @@ const LandingPage = () => {
       </Box>
       
       <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} modalConfig={modalContext === "signin" ? signInConfig : modalContext === "signup" ? signUpConfig : emailConfig} toggleModal={toggleModal} facebookSignUp={facebookSignUp} googleSignUp={googleSignUp} showEmailSignUp={showEmailSignUp} emailConfig={emailConfig} modalContext={modalContext} subtitleText={subtitleText} />
-      <GoogleAuth /><FacebookAuth />
+      {<GoogleAuth /> || <FacebookAuth />}
+      
 
       <Footer />
     </Box>

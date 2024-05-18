@@ -84,7 +84,7 @@ const GoogleAuth = () => {
     const signedReader = auth.onAuthStateChanged((user: User | null) => {
       setCurrentUser(user);
       if (user) {
-        navigate('/hive-hub');
+        navigate('hive-hub');
       }
     });
     return () => signedReader();

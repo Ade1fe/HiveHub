@@ -21,9 +21,9 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
 const storage = getStorage(app);
-export const GoogleUser = new GoogleAuthProvider();
-export const FacebookUser = new FacebookAuthProvider();
-export const database = getDatabase(app);
+const GoogleUser = new GoogleAuthProvider();
+const FacebookUser = new FacebookAuthProvider();
+const database = getDatabase(app);
 
 // Listen for changes in authentication state
 onAuthStateChanged(auth, (user) => {
@@ -34,7 +34,7 @@ onAuthStateChanged(auth, (user) => {
     }
   });
 
-export { app, analytics, auth, firestore, storage, onAuthStateChanged };
+export { app, analytics, auth, firestore, storage, onAuthStateChanged, GoogleUser, FacebookUser, database };
 
 
 

@@ -7,8 +7,8 @@ import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
 // import reader2 from '../../assets/woman-using-digital-tablet-technology.png'
-import { facebookSignUp } from './../auth/facebook/FacebookAuth';
-import { googleSignUp } from './../auth/google/GoogleAuth';
+import { facebookSignUp, FacebookAuth } from './../auth/facebook/FacebookAuth';
+import { googleSignUp, GoogleAuth } from './../auth/google/GoogleAuth';
 
 const LandingPage = () => {
   const initialWidth = useBreakpointValue({ base: '25px', md: '35px' });
@@ -159,6 +159,7 @@ const LandingPage = () => {
       </Box>
       
       <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} modalConfig={modalContext === "signin" ? signInConfig : modalContext === "signup" ? signUpConfig : emailConfig} toggleModal={toggleModal} facebookSignUp={facebookSignUp} googleSignUp={googleSignUp} showEmailSignUp={showEmailSignUp} emailConfig={emailConfig} modalContext={modalContext} subtitleText={subtitleText} />
+      <GoogleAuth /><FacebookAuth />
 
       <Footer />
     </Box>

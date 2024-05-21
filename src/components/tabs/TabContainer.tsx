@@ -23,7 +23,9 @@ const TabContainer: React.FC = () => {
           const title = data.titles ? data.titles[0] : 'Title'; 
           const imageSrc = data.images ? data.images[0] : blogimg; 
           const description = data.content.replace(/\[(.*?)\]/g, '').trim();
+          console.log("data.userId",data.userId,)
           return {
+            userId: data.userId, 
             id: doc.id,
             category: data.categories || 'hive-hub',
             date: formattedDate,
@@ -34,6 +36,7 @@ const TabContainer: React.FC = () => {
           };
         });
         setData(fetchedData);
+        console.log("fetchedData ", fetchedData );
         if (fetchedData.length > 0) {
           setSelectedCategory(fetchedData[0].category);
         }
@@ -101,6 +104,17 @@ const TabContainer: React.FC = () => {
 };
 
 export default TabContainer;
+
+
+
+
+
+
+
+
+
+
+
 
 
 

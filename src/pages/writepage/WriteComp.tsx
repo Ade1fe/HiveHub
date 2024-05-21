@@ -70,7 +70,7 @@ const WriteComp: React.FC = () => {
             setImages(data.images || []);
             setVideoFileData(data.videoFileData || []);
             setVideos(data.videos || []);
-            setCategories(data.categories || []); // Retrieve categories
+            setCategories(data.categories || []); 
           }
         } catch (error) {
           console.error('Error fetching document:', error);

@@ -14,7 +14,7 @@ const facebookSignUp = async () => {
     await storeUserData(user, 'Facebook');
   } 
   catch (err) {
-    console.log(err);
+    // console.log(err);
   }
 };
 

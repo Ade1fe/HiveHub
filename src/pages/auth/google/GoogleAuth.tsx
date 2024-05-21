@@ -15,7 +15,7 @@ export const googleSignUp = async () => {
     await storeUserData(user, 'Google');
   }
   catch (err) {
-    console.log(err);
+    // console.log(err);
   }
 }
 

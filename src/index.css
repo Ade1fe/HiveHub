@@ -2,6 +2,39 @@ body{
     background-color: white !important;
     color: black !important;
 }
+
+input:-webkit-autofill, Input:-webkit-autofill,
+input:-webkit-autofill:hover, Input:-webkit-autofill:hover,
+input:-webkit-autofill:focus, Input:-webkit-autofill:focus,
+input:-webkit-autofill:active, Input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+@-webkit-keyframes autofill {
+    0%,100% {
+        color: #666;
+        background: transparent;
+    }
+}
+
+input:-webkit-autofill, Input:-webkit-autofill {
+    -webkit-animation-delay: 1s;
+    -webkit-animation-name: autofill;
+    -webkit-animation-fill-mode: both;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+input[data-autocompleted], Input[data-autocompleted] {
+    background-color: transparent !important;
+}
+
 .sChakraUI {
     width: 55%;
     height: auto;

@@ -1,8 +1,8 @@
 
-
 import { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import { ChakraBaseProvider,  } from '@chakra-ui/react';
+//  @ts-ignore
+import { ChakraBaseProvider, ChakraProvider } from '@chakra-ui/react';
 import { auth, onAuthStateChanged } from './firebase'; 
 import router from './Router';
 import './index.css';
@@ -13,7 +13,7 @@ function App() {
     // Set up the authentication listener
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log('User is logged in:', user.uid);
+        console.log('User is logged in');
       } else {
         console.log('User is logged out');
       }
@@ -24,9 +24,9 @@ function App() {
 
   return (
     <>
-          <ChakraBaseProvider theme={theme}>
+      <ChakraProvider theme={theme} toastOptions={{ defaultOptions: { position: 'top-right' } }}>
         <RouterProvider router={router}></RouterProvider>
-      </ChakraBaseProvider>
+      </ChakraProvider>
     </>
   );
 }

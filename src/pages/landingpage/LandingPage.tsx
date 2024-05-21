@@ -7,8 +7,10 @@ import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
 // import reader2 from '../../assets/woman-using-digital-tablet-technology.png'
-import { facebookSignUp } from './../auth/facebook/FacebookAuth';
-import { googleSignUp } from './../auth/google/GoogleAuth';
+import { facebookSignUp, FacebookAuth } from './../auth/facebook/FacebookAuth';
+import { googleSignUp, GoogleAuth } from './../auth/google/GoogleAuth';
+import { createReader } from './../auth/signup/SignUpForm';
+import { readReader } from './../auth/signin/SignInForm';
 
 const LandingPage = () => {
   const initialWidth = useBreakpointValue({ base: '25px', md: '35px' });
@@ -19,6 +21,7 @@ const LandingPage = () => {
   const animateHeight = useBreakpointValue({ base: '25px', md: '25px' });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // @ts-ignore
   const [isSignInOpen, setIsSignInOpen] = useState(false);
   const [showEmailSignUp, setShowEmailSignUp] = useState(false);
   const [modalContext, setModalContext] = useState("");
@@ -52,17 +55,17 @@ const LandingPage = () => {
     },
   };
 
-  console.log(isSignInOpen);
+  // console.log(isSignInOpen);
 
   
   const getEmailSubtitleAndContext = (modalConfig: any) => {
-    console.log("Modal Config in getSubtitleAndContext:", modalConfig);
+    // console.log("Modal Config in getSubtitleAndContext:", modalConfig);
       let subtitleText = '';
       let modalContext = '';
 
       switch (modalConfig) {
         case signInConfig:
-          subtitleText = 'Enter the email address associated with your account, and we’ll send a link to your inbox.';
+          subtitleText = 'Enter the email address and password associated with your account';
           modalContext = 'All sign in options';
           break;
         case signUpConfig:
@@ -88,8 +91,8 @@ const LandingPage = () => {
   const signUpConfig = {
     title: 'Come aboard Hivehub',
     buttons: [
-      { onClick: googleSignUp, icon: <FcGoogle className='google' />, text: 'Google', },
-      { onClick: facebookSignUp, icon: <BsFacebook className='facebook' />, text: 'Facebook', },
+      { onClick: googleSignUp, icon: <FcGoogle className='google' />, text: 'Google', setAuthMethod: 'google', },
+      { onClick: facebookSignUp, icon: <BsFacebook className='facebook' />, text: 'Facebook', setAuthMethod: 'facebook', },
       { onClick: emailSignUp, icon: <HiOutlineMail className='email' />, text: 'Email', },
     ],
     texts: [
@@ -101,8 +104,8 @@ const LandingPage = () => {
   const signInConfig = {
     title: 'Welcome back.',
     buttons: [
-      { onClick: googleSignUp, icon: <FcGoogle className='google' />, text: 'Google', },
-      { onClick: facebookSignUp, icon: <BsFacebook className='facebook' />, text: 'Facebook', },
+      { onClick: googleSignUp, icon: <FcGoogle className='google' />, text: 'Google', setAuthMethod: 'google', },
+      { onClick: facebookSignUp, icon: <BsFacebook className='facebook' />, text: 'Facebook', setAuthMethod: 'facebook', },
       { onClick: emailSignUp, icon: <HiOutlineMail className='email' />, text: 'Email', },
     ],
     texts: [
@@ -158,7 +161,9 @@ const LandingPage = () => {
         <motion.div initial={{ opacity: 1, x: -20, background: '#ee6055', clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }} animate={{ opacity: 0.5, x: 0, background: '#fbff12' }} exit={{ opacity: 1, x: -20, background: '#662e9b' }} transition={{ type: 'tween', duration: 1.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="star1"></motion.div>
       </Box>
       
-      <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} modalConfig={modalContext === "signin" ? signInConfig : modalContext === "signup" ? signUpConfig : emailConfig} toggleModal={toggleModal} facebookSignUp={facebookSignUp} googleSignUp={googleSignUp} showEmailSignUp={showEmailSignUp} emailConfig={emailConfig} modalContext={modalContext} subtitleText={subtitleText} />
+      <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} modalConfig={modalContext === "signin" ? signInConfig : modalContext === "signup" ? signUpConfig : emailConfig} toggleModal={toggleModal} facebookSignUp={facebookSignUp} googleSignUp={googleSignUp} showEmailSignUp={showEmailSignUp} emailConfig={emailConfig} modalContext={modalContext} subtitleText={subtitleText} createReader={createReader} readReader={readReader} />
+      {<GoogleAuth /> || <FacebookAuth />}
+      
 
       <Footer />
     </Box>

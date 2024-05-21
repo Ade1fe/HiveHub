@@ -34,6 +34,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleModal }) => {
   };
 
   const getMessage = () => {
+
     if (user.email === 'addypearl09@gmail.com' || user.email === 'Tubiobaloluwa@gmail.com') {
       return 'Welcome admin';
     }

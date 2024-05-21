@@ -1,4 +1,3 @@
-
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
@@ -21,20 +20,20 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
 const storage = getStorage(app);
-export const GoogleUser = new GoogleAuthProvider();
-export const FacebookUser = new FacebookAuthProvider();
-export const database = getDatabase(app);
+const GoogleUser = new GoogleAuthProvider();
+const FacebookUser = new FacebookAuthProvider();
+const database = getDatabase(app);
 
 // Listen for changes in authentication state
 onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log('User is logged in:', user.uid);
+      console.log('User is logged in');
     } else {
       console.log('User is logged out');
     }
-  });
+});
 
-export { app, analytics, auth, firestore, storage, onAuthStateChanged };
+export { app, analytics, auth, firestore, storage, onAuthStateChanged, GoogleUser, FacebookUser, database };
 
 
 

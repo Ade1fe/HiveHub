@@ -1,6 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import { AdvertContainer, SideContainer, TabContainer } from '../../components';
 import { MainLayout } from '..';
+import TabsCard from '../../components/tabs/TabsCard';
 
 const Homepage = () => {
   
@@ -10,7 +11,8 @@ const Homepage = () => {
 
       <Box className="" maxW='1340px' mx='auto' mt='20px' display={['flex']} gap='20px'>
       <Box className="" w={['65%']} >
-        <TabContainer />
+        {/* <TabContainer /> */}
+        <TabsCard />
       </Box>
 
       <Box className="" w={['35%']}>

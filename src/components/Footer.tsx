@@ -5,7 +5,7 @@ import { BiLocationPlus } from 'react-icons/bi';
 
 const Footer = () => {
   return (
-    <Box mt={['60px', '70px', '80px', '90px']} mx='auto' mb='20px' px={[4,4,4,4,2,8]}  textAlign='center' display={['block','block', 'flex']} gap='4' justifyContent='space-between' alignItems='center' w='full'>
+    <Box pos='static' mt={['60px', '70px', '80px', '90px']} mx='auto' mb='20px' px={[4,4,4,4,2,8]}  textAlign='center' display={['block','block', 'flex']} gap='4' justifyContent='space-between' alignItems='center' w='full'>
     <Text fontSize="sm" color="gray.500" display={['none', 'none', 'block']}>&copy; 2023 - 2024, All Rights Reserved</Text>
     <Box mt="4" display="flex" flexDirection={["column", 'row']} flexWrap='wrap'  justifyContent={['center']} alignItems="center" gap={['2', '4', '6']}>
       <Text display="flex" alignItems="center" fontSize={['sm']}>

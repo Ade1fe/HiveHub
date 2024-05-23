@@ -1,12 +1,13 @@
 import React from 'react';
-import { MainLayout, WriteComp } from '..';
+import { MainLayout, Write, WriteComp } from '..';
 
 const WritePage: React.FC = () => {
  
 
   return (
     <MainLayout>
-      <WriteComp />
+      {/* <WriteComp /> */}
+      <Write />
     </MainLayout>
   );
 };

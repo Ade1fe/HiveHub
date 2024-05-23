@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import defaultImageFile from '../../../assets/user.png'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { toast } from "sonner";
-import Toast from "../../../toast/Toast";
+import { Toaster, toast } from "sonner";
+// import Toast from "../../../toast/Toast";
 
 const createReader = async (username: string, email: string, password: string) => {
   try {
@@ -114,7 +114,8 @@ const SignUpForm = () => {
   
   return (
     <div>
-      <Toast showToast={showToastMessage} />
+      <Toaster position='top-right' z-index='9999' visibleToasts={2} dir='rtl' theme="light" invert={true} expand={true} richColors closeButton />
+      {/* <Toast showToast={showToastMessage} /> */}
     </div>
   )
 }

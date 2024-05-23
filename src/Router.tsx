@@ -14,7 +14,7 @@ const Router = createBrowserRouter([
     element: <Homepage />,
   },
   {
-    path: "/display/:itemId",
+    path: "/display/:postId",
     element: <DisplayPage  />,
   },
   {

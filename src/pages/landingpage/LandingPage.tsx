@@ -6,11 +6,11 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
-// import reader2 from '../../assets/woman-using-digital-tablet-technology.png'
 import { facebookSignUp, FacebookAuth } from './../auth/facebook/FacebookAuth';
 import { googleSignUp, GoogleAuth } from './../auth/google/GoogleAuth';
 import { createReader } from './../auth/signup/SignUpForm';
 import { readReader } from './../auth/signin/SignInForm';
+import { Toaster } from "sonner";
 
 const LandingPage = () => {
   const initialWidth = useBreakpointValue({ base: '25px', md: '35px' });
@@ -84,7 +84,7 @@ const LandingPage = () => {
 
   const emailSignUp = () => {
     toggleModal('emailSignUp')
-    setShowEmailSignUp(true);
+    // setShowEmailSignUp(true);
     // console.log(emailConfig);
   }
 
@@ -117,10 +117,10 @@ const LandingPage = () => {
   const { subtitleText } = getEmailSubtitleAndContext(modalContext === "signin" ? signInConfig : modalContext === "signup" ? signUpConfig : emailConfig);
 
   return (
-    <Box display='flex' flexDir='column' w='100%' alignItems='center' justifyContent='center' gap={['20px', '30px']}  maxW="1440px" mx='auto' px={[4,4,4,4,2,0]} >
+    <Box display='flex' flexDir='column' w='100%' alignItems='center' justifyContent='center' gap={['20px', '30px']} px={[4,4,4,4,2,0]} >
       <Header toggleModal={(type: string) => toggleModal(type)} />
 
-      <Box display='flex' flexDir={['column', 'row']} w={['100%', '95%']} marginX='auto' pos='relative' alignItems='center' justifyContent={['center', 'space-between']} px={['2%', '3%']} py={['2%', '6.49%']} gap={['40px', '60px']} overflow='hidden'>
+      <Box display='flex' flexDir={['column', 'row']} w={['100%', '95%']} marginX='auto' pos='relative' alignItems='center' justifyContent={['center', 'space-between']} px={['2%', '3%']} maxW="1440px" mx='auto' py={['2%', '6.49%']} gap={['40px', '60px']} overflow='hidden'>
         <motion.div initial={{ opacity: 1, y: -20, background: '#e5989b' }} animate={{ opacity: 0.5, y: 0, background: '#0077b6' }} exit={{ opacity: 1, y: -20, background: '#cdb4db' }} transition={{ type: 'tween', duration: 1.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="ball" ></motion.div>
         <motion.div initial={{ opacity: 1, background: '#656d4a', width: initialWidth, height: initialHeight, borderRadius: '50%' }} animate={{ opacity: 0.5, background: '#b5179e', width: animateWidth, height: animateHeight, borderRadius: '10px' }} exit={{ opacity: 1, background: '#455e89', width: exitWidth, height: exitHeight, borderRadius: '50%' }} transition={{ type: 'tween', duration: 2.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="sphere" ></motion.div>
 
@@ -164,7 +164,16 @@ const LandingPage = () => {
       <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} modalConfig={modalContext === "signin" ? signInConfig : modalContext === "signup" ? signUpConfig : emailConfig} toggleModal={toggleModal} facebookSignUp={facebookSignUp} googleSignUp={googleSignUp} showEmailSignUp={showEmailSignUp} emailConfig={emailConfig} modalContext={modalContext} subtitleText={subtitleText} createReader={createReader} readReader={readReader} />
       {<GoogleAuth /> || <FacebookAuth />}
       
-
+      <Toaster
+        position='top-right'
+        visibleToasts={2}
+        dir='rtl'
+        theme="light"
+        invert={true}
+        expand={true}
+        richColors
+        closeButton
+      />
       <Footer />
     </Box>
   )

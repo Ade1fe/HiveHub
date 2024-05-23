@@ -177,6 +177,21 @@ input[data-autocompleted], Input[data-autocompleted] {
   font-size: large;
 }
 
+.scroll::-webkit-scrollbar {
+    display: none;
+    resize: none;
+    outline: 0px solid transparent;
+}
+
+[contenteditable] {
+    outline: 0px solid transparent;
+}
+
+div[contenteditable="true"]::before {
+    content: attr(placeholder);
+    color: #aaa;
+}
+
 @media(max-width: 468px) {
     .sChakraUI {
         order: 0;

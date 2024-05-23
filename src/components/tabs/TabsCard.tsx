@@ -43,7 +43,7 @@ const TabsCard = () => {
                         timeStamp: formattedTimestamp,
                         authorId: data.authorId,
                         authorUsername: data.username,
-                        authorImage: data.userImage ? data.userImage[0] : blogimg,
+                        authorImage: data.authorImage ? data.authorImage : blogimg,
                     }
                 });
                 setPosts(postsArray);

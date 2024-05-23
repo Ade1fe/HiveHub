@@ -192,6 +192,12 @@ div[contenteditable="true"]::before {
     color: #aaa;
 }
 
+.content {
+    color: gray;
+    opacity: 0.9;
+    font-size: medium;
+}
+
 @media(max-width: 468px) {
     .sChakraUI {
         order: 0;

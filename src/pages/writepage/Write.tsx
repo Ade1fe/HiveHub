@@ -154,7 +154,7 @@ const Write = () => {
                     category: topic,
                     timestamp: serverTimestamp(),
                     authorId: authorId,
-                    authorUsername: authorUsername,
+                    username: authorUsername,
                     authorImage: authorImage,
                 });
                 console.log('Post saved successfully');

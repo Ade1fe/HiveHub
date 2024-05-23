@@ -1,9 +1,8 @@
-
-
 import React, { useEffect, useState } from 'react';
 import { Box , Image, Text} from '@chakra-ui/react';
 import { firestore } from '../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
+// @ts-ignore
 import RenderPage from './RenderPage'; // Import RenderPage component
 import { blogimg } from '../../assets';
 
@@ -12,6 +11,7 @@ interface DisplayPageProps {
 }
 
 const DisplayComp: React.FC<DisplayPageProps> = ({ itemId }) => {
+  // @ts-ignore
   const [categoryData, setCategoryData] = useState<any>(null); 
   const [timestamp, setTimestamp] = useState<Date | null>(null);
 
@@ -45,13 +45,12 @@ const DisplayComp: React.FC<DisplayPageProps> = ({ itemId }) => {
   return (
     <Box p={4}>
      <div className="">
-     <Text>{timestamp?.toLocaleString() || ""}</Text>
-      <Image boxSize='80px' borderRadius='50%'
-      src={blogimg} />
-      <Text>Follow</Text>
-      <Text>Oluwadamisi Damilola</Text>
+        <Text>{timestamp?.toLocaleString() || ""}</Text>
+        <Image boxSize='80px' borderRadius='50%' src={blogimg} />
+        <Text>Oluwadamisi Damilola</Text>
+        <Text>Follow</Text>
      </div>
-      {categoryData && <RenderPage categoryData={categoryData} />}
+      {/* {categoryData && <RenderPage categoryData={categoryData} />} */}
     </Box>
   );
 };

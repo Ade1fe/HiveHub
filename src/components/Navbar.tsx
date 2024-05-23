@@ -8,7 +8,7 @@ interface NavbarProps {
   toggleModal: (modal: 'signin' | 'signup') => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ toggleModal }) => {
+const Navbar: React.FC<NavbarProps> = ({ toggleModal }: { toggleModal: any }) => {
   const [user, setUser] = useState<{ email: string | null, photoURL: string | null }>({ email: null, photoURL: null });
   const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleModal }) => {
 
   const getMessage = () => {
 
-    if (user.email === 'addypearl09@gmail.com' || user.email === 'Tubiobaloluwa@gmail.com') {
+    if (user.email === 'addypearl09@gmail.com' || user.email === 'Tubiobaloluwa@gmail.com'.toUpperCase() || user.email === 'tubiobaloluwa@gmail.com' ) {
       return 'Welcome admin';
     }
     return `Welcome ${user.email}`;

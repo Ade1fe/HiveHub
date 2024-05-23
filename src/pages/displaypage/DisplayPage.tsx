@@ -1,15 +1,25 @@
 
-import { DisplayComp, MainLayout } from ".."
-import { useParams } from "react-router-dom";
+import { MainLayout } from ".."
+// import { useParams } from "react-router-dom";
+// import RenderPage from "./RenderPage";
+import RenderPost from "./RenderPost";
 
 
-const DisplayPage = () => {
-  const { itemId } = useParams<{ itemId: string }>();
+// @ts-ignore
+const DisplayPage = ({ categoryData }: any) => {
+  // const { itemId } = useParams<{ itemId: string }>();
+  // const { postId } = useParams<{ postId: string }>();
 
   
   return (
     <MainLayout>
-       <DisplayComp itemId={itemId || ''} />
+       {/* <DisplayComp itemId={itemId || ''} /> */}
+       {/* <RenderPage categoryData={categoryData} itemData={{ itemId: itemId || '' }} /> */}
+       <RenderPost />
+
+       <div className="">
+        am heee
+       </div>
     </MainLayout>
   );
 }

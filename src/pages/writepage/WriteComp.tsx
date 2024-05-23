@@ -284,7 +284,16 @@ const WriteComp: React.FC = () => {
       } 
       else {
         // Treat each line as a paragraph
-        elements.push(<Text key={index} fontSize="sm">{line}</Text>);
+        const isList = /^\s*([-*]|\d+\.)\s+/.test(line);
+        if (isList) {
+          // If it's a list item, render it as a list item
+          const listItemText = line.replace(/^\s*([-*]|\d+\.)\s+/, ''); // Remove the list indicator
+          elements.push(<Text key={index} as="li" fontSize="sm">{listItemText}</Text>);
+        } else {
+          // Otherwise, treat it as a paragraph
+          elements.push(<Text key={index} as="p" fontSize="sm">{line}</Text>);
+        }
+        // elements.push(<Text key={index} fontSize="sm">{line}</Text>);
       }
     }
 

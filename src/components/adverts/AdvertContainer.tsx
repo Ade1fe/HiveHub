@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Box, Text, Button, Image } from "@chakra-ui/react";
 
 const AdvertContainer = () => {

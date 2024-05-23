@@ -10,6 +10,7 @@ input:-webkit-autofill:active, Input:-webkit-autofill:active {
     transition: background-color 5000s ease-in-out 0s;
 }
 
+
 @-webkit-keyframes autofill {
     0%,100% {
         color: #666;
@@ -175,6 +176,27 @@ input[data-autocompleted], Input[data-autocompleted] {
 
 .facebook, .google, .email {
   font-size: large;
+}
+
+.scroll::-webkit-scrollbar {
+    display: none;
+    resize: none;
+    outline: 0px solid transparent;
+}
+
+[contenteditable] {
+    outline: 0px solid transparent;
+}
+
+div[contenteditable="true"]::before {
+    content: attr(placeholder);
+    color: #aaa;
+}
+
+.content {
+    color: gray;
+    opacity: 0.9;
+    font-size: medium;
 }
 
 @media(max-width: 468px) {

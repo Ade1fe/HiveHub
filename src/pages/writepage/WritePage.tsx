@@ -1,5 +1,5 @@
 import React from 'react';
-import { MainLayout, Write, WriteComp } from '..';
+import { MainLayout, Write } from '..';
 
 const WritePage: React.FC = () => {
  

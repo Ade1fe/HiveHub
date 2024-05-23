@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box , Image, Text} from '@chakra-ui/react';
 import { firestore } from '../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
+// @ts-ignore
 import RenderPage from './RenderPage'; // Import RenderPage component
 import { blogimg } from '../../assets';
 
@@ -10,6 +11,7 @@ interface DisplayPageProps {
 }
 
 const DisplayComp: React.FC<DisplayPageProps> = ({ itemId }) => {
+  // @ts-ignore
   const [categoryData, setCategoryData] = useState<any>(null); 
   const [timestamp, setTimestamp] = useState<Date | null>(null);
 

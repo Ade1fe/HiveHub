@@ -1,4 +1,4 @@
-import { Text, Box, IconButton, Input, Menu, MenuButton, MenuItem, MenuList, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Button, FormControl, FormLabel, useDisclosure } from "@chakra-ui/react"
+import { Box, IconButton, Input, Menu, MenuButton, MenuItem, MenuList, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Button, FormControl, FormLabel, useDisclosure } from "@chakra-ui/react"
 import { useEffect, useRef, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import { CiImageOn } from "react-icons/ci";
@@ -9,7 +9,9 @@ import { auth, firestore, storage } from "../../firebase";
 import { addDoc, doc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { collection } from 'firebase/firestore';
 import { User } from "firebase/auth";
+// @ts-ignore
 import { useCurrentEditor } from '@tiptap/react'
+// @ts-ignore
 import TextEditor from "../../components/editor/TextEditor";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
@@ -26,6 +28,7 @@ const Write = () => {
     const contentEditableRef = useRef<HTMLDivElement>(null);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    // @ts-ignore
     const editorRef = useRef<any>('');
 
 

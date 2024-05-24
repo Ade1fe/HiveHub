@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { useEffect } from 'react';
+// @ts-ignore
 import { useEditor, EditorContent, BubbleMenu, FloatingMenu, EditorProvider, Editor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
@@ -32,6 +33,7 @@ const extensions = [
 const TextEditor = ({onEditorReady }: any) => {
     const editor = useEditor({
         extensions,
+        // @ts-ignore
         onUpdate: ({ editor }) => {
             // editor.update({})
         }

@@ -134,21 +134,22 @@ const Write = () => {
 
 
 
-    // useEffect(() => {
-    //     if (contentEditableRef.current && contentEditableRef.current.innerHTML.trim() === '') {
-    //         contentEditableRef.current.innerHTML = '<p class="placeholder">Your content</p>';
-    //     }
-    // }, []);
-
-    const handleFocus = () => {
-        if (contentEditableRef.current && contentEditableRef.current.innerHTML === '<p class="placeholder">Your content</p>') {
-            contentEditableRef.current.innerHTML = '';
+    useEffect(() => {
+        if (contentEditableRef.current && contentEditableRef.current.innerHTML.trim() === '') {
+            contentEditableRef.current.innerHTML = '<p class="placeholder">Your content</p>';
         }
-    };
+    }, []);
 
     const handleBlur = () => {
         if (contentEditableRef.current && contentEditableRef.current.innerHTML.trim() === '') {
             contentEditableRef.current.innerHTML = '<p class="placeholder">Your content</p>';
+        }
+    };
+
+
+    const handleFocus = () => {
+        if (contentEditableRef.current && contentEditableRef.current.innerHTML === '<p class="placeholder">Your content</p>') {
+            contentEditableRef.current.innerHTML = '';
         }
     };
 
@@ -224,7 +225,7 @@ const Write = () => {
 
     
   return (
-    <Box display='flex' flexDir='column' w='100%' alignItems='center' justifyContent='center' gap={['20px', '10px']} px={[4,4,4,4,2,0]} py='30px' maxW="65%" mx='auto'>
+    <Box display='flex' flexDir='column' w='100%' alignItems='center' justifyContent='center' gap={['20px', '10px']} px={[4,4,4,4,2,0]} py='30px' maxW={['90%', "65%"]} mx='auto'>
         <Input type='text' value={title} onChange={(e) => setTitle(e.target.value)} variant='unstyled' focusBorderColor='white' placeholder='Title' _placeholder={{ opacity: 1, color: 'gray.400', fontSize: ['25px', '40px'] }} fontSize={['25px', '40px']} size='lg' alignItems='center' justifyContent='center' display='flex' py='10px' px='10px' />
         <Box width='100%' pos='relative' display='flex' flexDir='column'>
             <Menu>
@@ -240,7 +241,7 @@ const Write = () => {
                     borderWidth='1px'
                     _focus={{ boxShadow: 'flushed' }}
                     pos='absolute'
-                    ml='-7%'
+                    ml={['-11%', '-7%']}
                 />
                 <MenuList display='flex' alignItems='center' justifyContent='space-between' px='7px' py='5px' border='none' shadow='none'>
                     <MenuItem w='30px' h='30px' border='gray.300' borderWidth='1px' borderRadius='50%' color='blue.500' display='flex' background='none' alignItems='center' justifyContent='center' _hover={{ background: 'none', cursor: 'pointer' }} p='3px' fontSize='x-large' onClick={() => handleFileUpload('image')}><CiImageOn /></MenuItem >
@@ -251,9 +252,8 @@ const Write = () => {
             </Menu>
 
             <Box>
-                
+                {/* <TextEditor placeholder="Your content..." onChange={handleContentChange} onFocus={handleFocus} onBlur={handleBlur} ref={contentEditableRef} /> */}
                 <Box contentEditable='true' className="scroll" onInput={handleContentChange} onFocus={handleFocus} onBlur={handleBlur} ref={contentEditableRef} resize='none' px='10px' py='10px' color='gray.400' _placeholder={{ opacity: 1, color: 'gray.400', fontSize: ['16px', '24px'] }} fontSize={['16px', '24px']} style={{ minHeight: '50px', color: 'gray.500', overflowY: 'auto' }} border='none' _focus={{ border: 'none~' }} >
-                    {/* {JSON.stringify(editor && editor.getJSON(), null, 2)} */}
                     
                 </Box>
             </Box>

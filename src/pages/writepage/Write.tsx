@@ -1,14 +1,17 @@
-import { Box, IconButton, Input, Menu, MenuButton, MenuItem, MenuList, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Button, FormControl, FormLabel, useDisclosure } from "@chakra-ui/react"
+import { Text, Box, IconButton, Input, Menu, MenuButton, MenuItem, MenuList, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Button, FormControl, FormLabel, useDisclosure } from "@chakra-ui/react"
 import { useEffect, useRef, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import { CiImageOn } from "react-icons/ci";
 import { HiOutlineVideoCamera } from "react-icons/hi";
 import { HiOutlineCodeBracket } from "react-icons/hi2";
 import { PiBracketsCurly } from "react-icons/pi";
-import { auth, firestore } from "../../firebase";
+import { auth, firestore, storage } from "../../firebase";
 import { addDoc, doc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { collection } from 'firebase/firestore';
 import { User } from "firebase/auth";
+import { useCurrentEditor } from '@tiptap/react'
+import TextEditor from "../../components/editor/TextEditor";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 
 const Write = () => {
@@ -18,9 +21,12 @@ const Write = () => {
     const [authorId, setAuthorId] = useState('');
     const [authorUsername, setAuthorUsername] = useState('');
     const [authorImage, setAuthorImage] = useState('');
+    const [mediaUrls, setMediaUrls] = useState<string[]>([]);
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const contentEditableRef = useRef<HTMLDivElement>(null);
     const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const editorRef = useRef<any>('');
 
 
     useEffect(() => {
@@ -85,18 +91,27 @@ const Write = () => {
         handleContentChange();
     };
 
-    const handleFileUpload = (type: string) => {
+    const handleFileUpload = async (type: string) => {
         const input = document.createElement("input");
         input.type = 'file';
         input.accept = type === 'image' ? 'image/*' : 'video/*';
-        input.onchange = (event: any) => {
-            const file = event.target.files[0];
-            if (file) {
-                const url = URL.createObjectURL(file);
-                const mediaElement = type === 'image'
-                    ? `\n\n<img src="${url}" alt="uploaded image" style="max-width: 100%; display: block; margin: 10px 0;" />\n\n`
-                    : `\n\n<video src="${url}" controls style="max-width: 100%; display: block; margin: 10px 0;"></video>\n\n`;
-                insertAtCursor(mediaElement);
+        input.onchange = async (event: any) => {
+            const files = event.target.files;
+            if (files.length > 0) {
+                const urls: string[] = [];
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const fileRef = ref(storage, `uploads/${Date.now()}-${file.name}`);
+                    await uploadBytes(fileRef, file);
+                    const url = await getDownloadURL(fileRef);
+                    urls.push(url);
+                    const mediaElement = type === 'image'
+                        ? `\n\n<img src="${url}" alt="uploaded image" style="max-width: 100%; display: block; margin: 10px 0;" />\n\n`
+                        : `\n\n<video src="${url}" controls style="max-width: 100%; display: block; margin: 10px 0;"></video>\n\n`;
+                    insertAtCursor(mediaElement);
+                }
+                setMediaUrls(prevUrls => [...prevUrls, ...urls]);
+                // editorRef.current.chain().focus().insertContent(mediaElement).run();
             }
         };
         input.click();
@@ -116,11 +131,11 @@ const Write = () => {
 
 
 
-    useEffect(() => {
-        if (contentEditableRef.current && contentEditableRef.current.innerHTML.trim() === '') {
-            contentEditableRef.current.innerHTML = '<p class="placeholder">Your content</p>';
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (contentEditableRef.current && contentEditableRef.current.innerHTML.trim() === '') {
+    //         contentEditableRef.current.innerHTML = '<p class="placeholder">Your content</p>';
+    //     }
+    // }, []);
 
     const handleFocus = () => {
         if (contentEditableRef.current && contentEditableRef.current.innerHTML === '<p class="placeholder">Your content</p>') {
@@ -144,6 +159,7 @@ const Write = () => {
             return;
         }
         try {
+            // const serializedContent = editorRef.current;
             const contentEditable = contentEditableRef.current;
             if (contentEditable) {
                 const serializedContent = contentEditable.innerHTML;
@@ -156,14 +172,13 @@ const Write = () => {
                     authorId: authorId,
                     username: authorUsername,
                     authorImage: authorImage,
+                    contentImage: mediaUrls,
                 });
                 console.log('Post saved successfully');
                 setTitle('');
                 setTopic('');
                 setContent('');
-                if (contentEditableRef.current) {
-                    contentEditableRef.current.innerHTML = '<p class="placeholder">Your content</p>';
-                }
+                setMediaUrls([]);
             }
             else {
                 console.error('contentEditableRef is not initialized');
@@ -232,7 +247,13 @@ const Write = () => {
                 </MenuList>
             </Menu>
 
-            <Box contentEditable='true' className="scroll" onInput={handleContentChange} onFocus={handleFocus} onBlur={handleBlur} ref={contentEditableRef} resize='none' px='10px' py='10px' color='gray.400' _placeholder={{ opacity: 1, color: 'gray.400', fontSize: ['16px', '24px'] }} fontSize={['16px', '24px']} style={{ minHeight: '50px', color: 'gray.500', overflowY: 'auto' }} border='none' _focus={{ border: 'none~' }} ></Box>
+            <Box>
+                
+                <Box contentEditable='true' className="scroll" onInput={handleContentChange} onFocus={handleFocus} onBlur={handleBlur} ref={contentEditableRef} resize='none' px='10px' py='10px' color='gray.400' _placeholder={{ opacity: 1, color: 'gray.400', fontSize: ['16px', '24px'] }} fontSize={['16px', '24px']} style={{ minHeight: '50px', color: 'gray.500', overflowY: 'auto' }} border='none' _focus={{ border: 'none~' }} >
+                    {/* {JSON.stringify(editor && editor.getJSON(), null, 2)} */}
+                    
+                </Box>
+            </Box>
             <Button onClick={handleContinue} mt='20px' colorScheme='blue' ml='auto' borderRadius='1000px'>Continue</Button>
         </Box>
         <Modal isCentered isOpen={isOpen} onClose={onClose} size={['xs', 'md', 'lg']} >

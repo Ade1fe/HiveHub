@@ -199,6 +199,46 @@ div[contenteditable="true"]::before {
     font-size: medium;
 }
 
+.bubble-menu {
+    display: flex;
+    width: 100% !important;
+    background: white;
+    border: none;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 6px 4px;
+}
+
+.floating-menu {
+    display: flex;
+    width: 100% !important;
+    background: white;
+    border: none;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 6px 4px;
+}
+
+.floating-menu button, .bubble-menu button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    margin: 0 2px;
+}
+
+.floating-menu button:hover, .bubble-menu button:hover {
+    background: #efefef;
+    border-radius: 4px;
+}
+
+.floating-menu button.is-active, .bubble-menu button.is-active {
+    background: #efefef;
+}
+
+
 @media(max-width: 468px) {
     .sChakraUI {
         order: 0;

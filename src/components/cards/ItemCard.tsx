@@ -8,7 +8,7 @@ interface Author {
 }
 
 interface ItemCardProps {
-  itemcardId? : string;
+  postId? : string;
   category?: string;
   date?: string;
   title?: string;
@@ -20,10 +20,10 @@ interface ItemCardProps {
 }
 
 
-const ItemCard: React.FC<ItemCardProps> = ({ itemcardId, category, date, title, description, author, imageSrc, onItemClick }) => {
+const ItemCard: React.FC<ItemCardProps> = ({ postId, category, date, title, description, author, imageSrc, onItemClick }) => {
   return (
     <Box className="texts" my='4' onClick={onItemClick}>
-      <Text className="" display='none'>{itemcardId} </Text>
+      <Text className="" display='none'>{postId} </Text>
       <Box className="" borderRadius='20px'   overflow='hidden' display={['flex']} w='' shadow='base' _hover={{ bg: "#222", color: "white", transform: "scale(1.009)", transition: "transform 0.3s ease-in-out" , borderRadius: "20px" }} cursor='pointer' alignItems='center' gap='4'>
         <Box w={['70%']} px={['20px']} py='40px'>
           <Box display="flex" gap='4'>

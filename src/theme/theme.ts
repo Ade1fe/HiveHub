@@ -1,5 +1,6 @@
 
 import { extendTheme } from "@chakra-ui/react";
+import { withProse } from '@nikolovlazar/chakra-ui-prose'
 
 const theme = extendTheme({
   colors: {
@@ -16,6 +17,8 @@ const theme = extendTheme({
       300: '#023e8a',
     }
   },
-});
+},
+withProse(),
+);
 
 export default theme;

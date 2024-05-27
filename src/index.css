@@ -188,7 +188,7 @@ input[data-autocompleted], Input[data-autocompleted] {
     outline: 0px solid transparent;
 }
 
-div[contenteditable="true"]::before {
+Box[contenteditable="true"]::before {
     content: attr(placeholder);
     color: #aaa;
 }
@@ -204,7 +204,7 @@ div[contenteditable="true"]::before {
     color: gray.500;
     resize: none;
     font-size: 24px;
-    min-height: 50px;
+    height: 0px;
     overflow-y: auto;
     border: none;
     outline: none;

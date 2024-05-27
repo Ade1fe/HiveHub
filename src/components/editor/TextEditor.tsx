@@ -11,7 +11,7 @@ import { PiParagraphLight, PiTextTThin, PiListBulletsBold, PiCodeBlockFill } fro
 import { CiUndo, CiRedo } from "react-icons/ci";
 // const content = '<p>Hello World!</p>'
 
-const TextEditor = ({ onChange, ref, onBlur, onFocus, placeholder }: {onBlur: any, onFocus: any, ref: any, onChange: (richText: string) => void; placeholder: string; }) => {
+const TextEditor = ({ onChange, ref }: { ref: any, onChange: (richText: string) => void; }) => {
     const editor = useEditor({
         extensions: [StarterKit.configure()],
         content: ref,
@@ -32,80 +32,84 @@ const TextEditor = ({ onChange, ref, onBlur, onFocus, placeholder }: {onBlur: an
     //     };
     // }, [editor, placeholder]);
 
+    const logClick = (action: string) => {
+        console.log(`Button clicked: ${action}`);
+    };
+
 
     if (!editor) {
-        return 'null';
+        return null;
     };
 
   return (
     <Box>
         <FloatingMenu editor={editor} tippyOptions={{ duration: 100 }} className="floating-menu">
-            <button onClick={() => editor.chain().focus().toggleBold().run()} disabled={!editor.can().chain().focus().toggleBold().run()} className={editor.isActive('bold') ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleBold().run(); logClick('Bold'); }} disabled={!editor.can().chain().focus().toggleBold().run()} className={editor.isActive('bold') ? 'is-active' : ''}>
                 <MdFormatBold />
             </button>
-            <button onClick={() => editor.chain().focus().toggleItalic().run()} disabled={!editor.can().chain().focus().toggleItalic().run()} className={editor.isActive('italic') ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleItalic().run(); logClick('Italic'); }} disabled={!editor.can().chain().focus().toggleItalic().run()} className={editor.isActive('italic') ? 'is-active' : ''}>
                 <BsTypeItalic />
             </button>
-            <button onClick={() => editor.chain().focus().toggleCode().run()} disabled={!editor.can().chain().focus().toggleCode().run()} className={editor.isActive('underline') ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleCode().run(); logClick('Code'); }} disabled={!editor.can().chain().focus().toggleCode().run()} className={editor.isActive('code') ? 'is-active' : ''}>
                 <AiTwotoneCode />
             </button>
-            <button onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}>
-                <PiTextTThin size='22' fontWeight='800' />
+            <button onClick={() => { editor.chain().focus().toggleHeading({ level: 2 }).run(); logClick('Heading 2'); }} className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}>
+                <PiTextTThin />
             </button>
-            <button onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} className={editor.isActive('heading', { level: 3 }) ? 'is-active' : ''}>
-                <PiTextTThin size='18' />
+            <button onClick={() => { editor.chain().focus().toggleHeading({ level: 3 }).run(); logClick('Heading 3'); }} className={editor.isActive('heading', { level: 3 }) ? 'is-active' : ''}>
+                <PiTextTThin />
             </button>
-            <button onClick={() => editor.chain().focus().toggleBulletList().run()} disabled={!editor.can().chain().focus().toggleBulletList().run()} className={editor.isActive('bulletList') ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleBulletList().run(); logClick('Bullet List'); }} className={editor.isActive('bulletList') ? 'is-active' : ''}>
                 <PiListBulletsBold />
             </button>
-            <button onClick={() => editor.chain().focus().toggleOrderedList().run()} disabled={!editor.can().chain().focus().toggleOrderedList().run()} className={editor.isActive('orderedList') ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleOrderedList().run(); logClick('Ordered List'); }} className={editor.isActive('orderedList') ? 'is-active' : ''}>
                 <MdFormatListNumbered />
             </button>
-            <button onClick={() => editor.chain().focus().toggleCodeBlock().run()} disabled={!editor.can().chain().focus().toggleCodeBlock().run()} className={editor.isActive('codeBlock') ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleCodeBlock().run(); logClick('Code Block'); }} className={editor.isActive('codeBlock') ? 'is-active' : ''}>
                 <PiCodeBlockFill />
             </button>
-            <button onClick={() => editor.chain().focus().toggleBlockquote().run()} disabled={!editor.can().chain().focus().toggleBlockquote().run()} className={editor.isActive('blockquote') ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleBlockquote().run(); logClick('Blockquote'); }} className={editor.isActive('blockquote') ? 'is-active' : ''}>
                 <BsBlockquoteLeft />
             </button>
-            <button onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().chain().focus().undo().run()}>
+            <button onClick={() => { editor.chain().focus().undo().run(); logClick('Undo'); }} disabled={!editor.can().chain().focus().undo().run()}>
                 <CiUndo />
             </button>
-            <button onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().chain().focus().redo().run()}>
+            <button onClick={() => { editor.chain().focus().redo().run(); logClick('Redo'); }} disabled={!editor.can().chain().focus().redo().run()}>
                 <CiRedo />
             </button>
         </FloatingMenu>
         <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }} className="bubble-menu">
-        <button onClick={() => editor.chain().focus().toggleBold().run()} disabled={!editor.can().chain().focus().toggleBold().run()} className={editor.isActive('bold') ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleBold().run(); logClick('Bold'); }} disabled={!editor.can().chain().focus().toggleBold().run()} className={editor.isActive('bold') ? 'is-active' : ''}>
                 <MdFormatBold />
             </button>
-            <button onClick={() => editor.chain().focus().toggleItalic().run()} disabled={!editor.can().chain().focus().toggleItalic().run()} className={editor.isActive('italic') ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleItalic().run(); logClick('Italic'); }} disabled={!editor.can().chain().focus().toggleItalic().run()} className={editor.isActive('italic') ? 'is-active' : ''}>
                 <BsTypeItalic />
             </button>
-            <button onClick={() => editor.chain().focus().toggleCode().run()} disabled={!editor.can().chain().focus().toggleCode().run()} className={editor.isActive('underline') ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleCode().run(); logClick('Code'); }} disabled={!editor.can().chain().focus().toggleCode().run()} className={editor.isActive('underline') ? 'is-active' : ''}>
                 <AiTwotoneCode />
             </button>
-            <button onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleHeading({ level: 2 }).run(); logClick('Heading 2'); }} className={editor.isActive('heading', { level: 2 }) ? 'is-active' : ''}>
                 <PiTextTThin size='22' fontWeight='800' />
             </button>
-            <button onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} className={editor.isActive('heading', { level: 3 }) ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleHeading({ level: 3 }).run(); logClick('Heading 3'); }} className={editor.isActive('heading', { level: 3 }) ? 'is-active' : ''}>
                 <PiTextTThin size='18' />
             </button>
-            <button onClick={() => editor.chain().focus().toggleBulletList().run()} disabled={!editor.can().chain().focus().toggleBulletList().run()} className={editor.isActive('bulletList') ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleBulletList().run(); logClick('Bullet List'); }} className={editor.isActive('bulletList') ? 'is-active' : ''}>
                 <PiListBulletsBold />
             </button>
-            <button onClick={() => editor.chain().focus().toggleOrderedList().run()} disabled={!editor.can().chain().focus().toggleOrderedList().run()} className={editor.isActive('orderedList') ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleOrderedList().run(); logClick('Ordered List'); }} className={editor.isActive('orderedList') ? 'is-active' : ''}>
                 <MdFormatListNumbered />
             </button>
-            <button onClick={() => editor.chain().focus().toggleCodeBlock().run()} disabled={!editor.can().chain().focus().toggleCodeBlock().run()} className={editor.isActive('codeBlock') ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleCodeBlock().run(); logClick('Code Block'); }} className={editor.isActive('codeBlock') ? 'is-active' : ''}>
                 <PiCodeBlockFill />
             </button>
-            <button onClick={() => editor.chain().focus().toggleBlockquote().run()} disabled={!editor.can().chain().focus().toggleBlockquote().run()} className={editor.isActive('blockquote') ? 'is-active' : ''}>
+            <button onClick={() => { editor.chain().focus().toggleBlockquote().run(); logClick('Blockquote'); }} className={editor.isActive('blockquote') ? 'is-active' : ''}>
                 <BsBlockquoteLeft />
             </button>
-            <button onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().chain().focus().undo().run()}>
+            <button onClick={() => { editor.chain().focus().undo().run(); logClick('Undo'); }} disabled={!editor.can().chain().focus().undo().run()}>
                 <CiUndo />
             </button>
-            <button onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().chain().focus().redo().run()}>
+            <button onClick={() => { editor.chain().focus().redo().run(); logClick('Redo'); }} disabled={!editor.can().chain().focus().redo().run()}>
                 <CiRedo />
             </button>
         </BubbleMenu>

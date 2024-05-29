@@ -6,6 +6,8 @@ import { Box, Tabs, TabList, TabPanel, TabPanels, Tab } from "@chakra-ui/react";
 import { blogimg } from '../../assets';
 import { useNavigate } from 'react-router-dom';
 import { ref, getDownloadURL } from "firebase/storage";
+import { toast } from "sonner";
+import Toast from "../../toast/Toast";
 
 interface Post {
     id: string;
@@ -50,6 +52,7 @@ const TabsCard = () => {
                             return url;
                         } catch (error) {
                             console.error(`Error fetching media URL for path ${path}: `, error);
+                            showToastMessage(`Error fetching media URL for path ${path}`, 'error');
                             return blogimg; // Return default image on error
                         }
                     }));
@@ -73,6 +76,7 @@ const TabsCard = () => {
             }
             catch (err) {
                 console.error('Error fetching posts: ', err);
+                showToastMessage('Error fetching posts: ', 'error');
             }
         }
 
@@ -95,7 +99,38 @@ const TabsCard = () => {
 
     const handlePostClick = (postId: string) => {
         navigate(`/display/${postId}`); 
-      };
+    };
+
+
+
+
+        //   CONFIGURING TOAST TO TOAST MESSAGE
+    const showToastMessage = (message: any, type: 'success' | 'error' | 'warning') => {
+        switch (type) {
+            case 'success':
+                toast.success(message, {
+                    position: 'top-right',
+                    duration: 3000,
+                });
+                break;
+            case 'error':
+                toast.error(message, {
+                    position: 'top-right',
+                    duration: 3000,
+                });
+                break;
+            case 'warning':
+                toast.warning(message, {
+                    position: 'top-right',
+                    duration: 3000,
+                });
+                break;
+            default:
+                break;
+        }
+    };
+
+
 
 
     
@@ -115,6 +150,8 @@ const TabsCard = () => {
                 ))}
             </TabPanels>
         </Tabs>
+
+        <Toast showToast={showToastMessage} />
     </Box>
   )
 }

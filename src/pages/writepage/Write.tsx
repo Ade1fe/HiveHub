@@ -3,13 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import { CiImageOn } from "react-icons/ci";
 import { HiOutlineVideoCamera } from "react-icons/hi";
-import { HiOutlineCodeBracket } from "react-icons/hi2";
 import { MdFormatBold } from "react-icons/md";
 import { AiTwotoneCode } from "react-icons/ai";
 import { BsTypeItalic, BsBlockquoteLeft } from "react-icons/bs";
 import { PiTextTThin } from "react-icons/pi";
 import { CiUndo, CiRedo } from "react-icons/ci";
-import { PiBracketsCurly } from "react-icons/pi";
+import { IoIosColorPalette } from "react-icons/io";
 import { auth, firestore, storage } from "../../firebase";
 import { addDoc, doc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { collection } from 'firebase/firestore';
@@ -19,6 +18,9 @@ import { useCurrentEditor } from '@tiptap/react'
 // @ts-ignore
 import TextEditor from "../../components/editor/TextEditor";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { CirclePicker } from "react-color";
+import { toast } from "sonner";
+import Toast from "../../toast/Toast";
 
 
 const Write = () => {
@@ -40,6 +42,9 @@ const Write = () => {
 
     const initialFontSize = useBreakpointValue({ base: 16, lg: 24 });
 
+    const [color, setColor] = useState('#000');
+    const [showColorPicker, setShowColorPicker] = useState(false);
+    const savedRange = useRef<Range | null>(null);
 
     useEffect(() => {
         const author = auth.onAuthStateChanged(async (user: User | null) => {
@@ -55,10 +60,12 @@ const Write = () => {
                 }
                 else {
                     console.log('No such reader in database');
+                    showToastMessage('No such reader in database', 'error')
                 }
             }
             else {
-                console.log('No user is signed in');
+                console.log('Reader is signed in');
+                showToastMessage('Reader is signed in', 'error')
             }
         });
 
@@ -149,19 +156,20 @@ const Write = () => {
             const selection = window.getSelection();
             const selectedText = selection?.toString();
             
-            if (selectedText) {
-                // There is selected text
-                console.log("Selected text:", selectedText);
-            } else {
-                // No text selected
-                console.log("No text selected");
-            }
+            // if (selectedText) {
+            //     console.log("Selected text:", selectedText);
+            // } else {
+            //     console.log("No text selected");
+            // }
             if (command === 'codeBlock') {
                 const codeBlock = `<pre><code>${selectedText}</code></pre>`;
                 insertAtCursor(codeBlock);
             } else if (command === 'blockquote') {
                 const blockquote = `<blockquote>${selectedText}</blockquote>`;
                 insertAtCursor(blockquote);
+            } else if (command === 'foreColor') {
+                document.execCommand('foreColor', false, color);
+                handleContentChange();
             } else {
                 document.execCommand(command, false, value);
                 handleContentChange();
@@ -222,8 +230,8 @@ const Write = () => {
                     const url = await getDownloadURL(fileRef);
                     urls.push(url);
                     const mediaElement = type === 'image'
-                        ? `\n\n<img src="${url}" alt="uploaded image" style="max-width: 100%; display: block; margin: 10px 0;" />\n\n`
-                        : `\n\n<video src="${url}" controls style="max-width: 100%; display: block; margin: 10px 0;"></video>\n\n`;
+                        ? `\n\n<img src="${url}" alt="uploaded image" style="max-width: 100%; display: block; margin: 10px 0;" />\n\n\n`
+                        : `\n\n<video src="${url}" controls style="max-width: 100%; display: block; margin: 10px 0;"></video>\n\n\n`;
                     insertAtCursor(mediaElement);
                 }
                 setMediaUrls(prevUrls => [...prevUrls, ...urls]);
@@ -234,15 +242,15 @@ const Write = () => {
 
     
 
-    const addCodeBlock = () => {
-        const codeBlock = `\n<pre><code>// New code block\n</code></pre>\n`;
-        insertAtCursor(codeBlock);
-    }
+    // const addCodeBlock = () => {
+    //     const codeBlock = `\n<pre><code>// New code block\n</code></pre>\n`;
+    //     insertAtCursor(codeBlock);
+    // }
 
-    const addEmbeddedCode = () => {
-        const embeddedCode = `\n<iframe src="https://example.com"></iframe>\n`;
-        insertText(embeddedCode, 'inserHTML');
-    }
+    // const addEmbeddedCode = () => {
+    //     const embeddedCode = `\n<iframe src="https://example.com"></iframe>\n`;
+    //     insertText(embeddedCode, 'inserHTML');
+    // }
 
 
 
@@ -274,6 +282,7 @@ const Write = () => {
     const savePost = async () => {
         if (!currentUser) {
             console.log('User is not authenticated');
+            showToastMessage('Reader is not authenticated', 'warning');
             return;
         }
         try {
@@ -292,11 +301,12 @@ const Write = () => {
                     authorImage: authorImage,
                     contentImage: mediaUrls,
                 });
-                console.log('Post saved successfully');
                 setTitle('');
                 setTopic('');
                 setContent('');
                 setMediaUrls([]);
+                console.log('Post saved successfully');
+                showToastMessage('Post saved', 'success')
             }
             else {
                 console.error('contentEditableRef is not initialized');
@@ -304,6 +314,7 @@ const Write = () => {
         }
         catch (err) {
             console.log('Error saving post', err);
+            showToastMessage(err, 'error')
         }
     };
 
@@ -313,7 +324,8 @@ const Write = () => {
             onOpen();
         }
         else {
-            console.log('Title or content is empty')
+            console.log('Title or content is empty');
+            showToastMessage('Please fill the title or post content', 'warning');
         }
     }
 
@@ -322,6 +334,7 @@ const Write = () => {
         e.preventDefault();
         if (!currentUser) {
             console.log('User is not authenticated');
+            showToastMessage('Reader is not authenticated', 'warning');
             return;
         }
         if (topic.trim() !== '') {
@@ -330,8 +343,71 @@ const Write = () => {
         }
         else {
             console.log('Topic is empty');
+            showToastMessage('Please fill the post Topic', 'warning');
+
         }
     }
+
+
+
+
+
+    const handleColorChange = (color: any) => {
+        setColor(color.hex);
+        setShowColorPicker(false);
+
+        // Restore selection and apply color
+        if (savedRange.current) {
+            const selection = window.getSelection();
+            selection?.removeAllRanges();
+            selection?.addRange(savedRange.current);
+            document.execCommand('foreColor', false, color.hex);
+            handleContentChange();
+        }
+    };
+
+    const toggleColorPicker = () => {
+        // Save the current selection
+        const selection = window.getSelection();
+        if (selection && selection.rangeCount > 0) {
+            savedRange.current = selection.getRangeAt(0);
+        }
+        setShowColorPicker(!showColorPicker);
+    };
+
+
+
+
+
+
+        //   CONFIGURING TOAST TO TOAST MESSAGE
+    const showToastMessage = (message: any, type: 'success' | 'error' | 'warning') => {
+        switch (type) {
+            case 'success':
+                toast.success(message, {
+                    position: 'top-right',
+                    duration: 3000,
+                });
+                break;
+            case 'error':
+                toast.error(message, {
+                    position: 'top-right',
+                    duration: 3000,
+                });
+                break;
+            case 'warning':
+                toast.warning(message, {
+                    position: 'top-right',
+                    duration: 3000,
+                });
+                break;
+            default:
+                break;
+        }
+    };
+
+
+
       
 
     
@@ -357,8 +433,8 @@ const Write = () => {
                 <MenuList display='flex' alignItems='center' justifyContent='space-between' px='7px' py='5px' border='none' shadow='none'>
                     <MenuItem w='30px' h='30px' border='gray.300' borderWidth='1px' borderRadius='50%' color='blue.500' display='flex' background='none' alignItems='center' justifyContent='center' _hover={{ background: 'none', cursor: 'pointer' }} p='3px' fontSize='x-large' onClick={() => handleFileUpload('image')}><CiImageOn /></MenuItem >
                     <MenuItem w='30px' h='30px' border='gray.300' borderWidth='1px' borderRadius='50%' color='blue.500' display='flex' background='none' alignItems='center' justifyContent='center' _hover={{ background: 'none', cursor: 'pointer' }} p='3px' fontSize='x-large' onClick={() => handleFileUpload('video')}><HiOutlineVideoCamera /></MenuItem >
-                    <MenuItem w='30px' h='30px' border='gray.300' borderWidth='1px' borderRadius='50%' color='blue.500' display='flex' background='none' alignItems='center' justifyContent='center' _hover={{ background: 'none', cursor: 'pointer' }} p='3px' fontSize='x-large' onClick={addCodeBlock}><HiOutlineCodeBracket /></MenuItem >
-                    <MenuItem w='30px' h='30px' border='gray.300' borderWidth='1px' borderRadius='50%' color='blue.500' display='flex' background='none' alignItems='center' justifyContent='center' _hover={{ background: 'none', cursor: 'pointer' }} p='3px' fontSize='x-large' onClick={addEmbeddedCode}><PiBracketsCurly /></MenuItem >
+                    {/* <MenuItem w='30px' h='30px' border='gray.300' borderWidth='1px' borderRadius='50%' color='blue.500' display='flex' background='none' alignItems='center' justifyContent='center' _hover={{ background: 'none', cursor: 'pointer' }} p='3px' fontSize='x-large' onClick={addCodeBlock}><HiOutlineCodeBracket /></MenuItem >
+                    <MenuItem w='30px' h='30px' border='gray.300' borderWidth='1px' borderRadius='50%' color='blue.500' display='flex' background='none' alignItems='center' justifyContent='center' _hover={{ background: 'none', cursor: 'pointer' }} p='3px' fontSize='x-large' onClick={addEmbeddedCode}><PiBracketsCurly /></MenuItem > */}
                 </MenuList>
             </Menu>
 
@@ -381,9 +457,9 @@ const Write = () => {
                     <Button p='4px' background='white' fontSize='18px' onClick={() => insertText('', 'codeBlock')}>
                         <AiTwotoneCode fontWeight='500'/>
                     </Button>
-                    {/* <Button p='4px' background='white' fontSize='18px' onClick={() => insertText('', 'codeBlock')}>
-                        <PiCodeBlockFill fontWeight='500'/>
-                    </Button> */}
+                    <Button p='4px' background='white' fontSize='18px' onClick={toggleColorPicker}>
+                        <IoIosColorPalette fontWeight='500'/>
+                    </Button>
                     <Button p='4px' background='white' fontSize='18px' onClick={() => insertText('', 'blockquote')}>
                         <BsBlockquoteLeft fontWeight='500'/>
                     </Button>
@@ -418,6 +494,12 @@ const Write = () => {
                 </ModalFooter>
             </ModalContent>
         </Modal>
+
+        {showColorPicker && (
+            <CirclePicker color={color} onChangeComplete={handleColorChange} />
+        )}
+
+        <Toast showToast={showToastMessage} />
     </Box>
   )
 }

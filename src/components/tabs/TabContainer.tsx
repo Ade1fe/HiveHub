@@ -82,17 +82,17 @@ const TabContainer: React.FC = () => {
       <TabPanels>
         {Object.keys(groupedData).map(category => (
           <TabPanel key={category}>
-            {groupedData[category].map((item, index) => (
+            {groupedData[category].map((post, index) => (
               <ItemCard
                 key={index}
-                itemcardId={item.id} 
-                category={item.category}
-                date={item.date}
-                title={item.title}
-                description={item.description}
-                author={item.author}
-                imageSrc={item.imageSrc}
-                onItemClick={() => handleItemClick(item.id)}
+                postId={post.id} 
+                category={post.category}
+                date={post.date}
+                title={post.title}
+                description={post.description}
+                author={post.author}
+                imageSrc={post.imageSrc}
+                onItemClick={() => handleItemClick(post.id)}
               />
             ))}
           </TabPanel>

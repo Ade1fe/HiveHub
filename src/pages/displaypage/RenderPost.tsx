@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { firestore } from "../../firebase";
 import { Box, Image, Text } from "@chakra-ui/react";
+import { Prose } from "@nikolovlazar/chakra-ui-prose";
 
 const RenderPost = () => {
   const { postId } = useParams();
@@ -17,8 +18,16 @@ const RenderPost = () => {
           const postSnap = await getDoc(postDoc);
           if (postSnap.exists()) {
             const postData = postSnap.data();
+            const parser = new DOMParser();
+            const docContent = parser.parseFromString(postData.content, 'text/html');
+            console.log(docContent);
+            const mediaElements = Array.from(docContent.querySelectorAll('img, video'));
+            console.log(mediaElements);
+            const mediaUrls = mediaElements.map(media => media.getAttribute('src'));
+            console.log(mediaUrls);
             setPost({
               ...postData,
+              contentImage: mediaUrls,
               timestamp: postData.timestamp?.toDate(),
             });
             setLoading(false);
@@ -57,7 +66,18 @@ const RenderPost = () => {
         </Box>
 
         <Box>
-          <Text fontSize='medium' color="gray.500" dangerouslySetInnerHTML={{ __html: post.content}}></Text>
+          <Prose>
+            <Text fontSize='medium' color="gray.500" dangerouslySetInnerHTML={{ __html: post.content}}></Text>
+          </Prose>
+          {post.mediaUrls && post.mediaUrls.map((url: string, index: number) => (
+            <Box key={index} mt='10px'>
+              {url.endsWith('.mp4') ? (
+                <video src={url} controls style={{ maxWidth: '100%', display: 'block', margin: '10px 0' }}></video>
+              ) : (
+                <Image src={url} alt={`media-${index}`} style={{ maxWidth: '100%', display: 'block', margin: '10px 0' }} />
+              )}
+            </Box>
+          ))}
         </Box>
       </Box>
     </Box>

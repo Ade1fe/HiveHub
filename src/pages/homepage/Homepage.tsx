@@ -9,14 +9,14 @@ const Homepage = () => {
     <MainLayout>
       <AdvertContainer />
 
-      <Box className="" maxW='1340px' mx='auto' mt='20px' display={['flex']} gap='20px'>
-      <Box className="" w={['65%']} >
-        <TabsCard />
-      </Box>
+      <Box maxW='1340px' mx='auto' mt='20px' display='flex' flexDirection={['column', 'row']} gap='20px'>
+        <Box flex={1} w={['100%', '100%', '65%']} >
+          <TabsCard />
+        </Box>
 
-      <Box className="" w={['35%']}>
-        <SideContainer />
-      </Box>
+        <Box flex={1} display={['none', 'none', 'flex']} w={['100%', '100%', '35%']} >
+          <SideContainer />
+        </Box>
       </Box>
     </MainLayout>
   );

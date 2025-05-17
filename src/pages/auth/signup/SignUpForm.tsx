@@ -2,13 +2,13 @@ import { createUserWithEmailAndPassword, sendEmailVerification, User } from "fir
 import { auth, firestore, storage } from "../../../firebase"
 import { addDoc, collection, } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import defaultImageFile from '../../../assets/user.png'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Toaster, toast } from "sonner";
+import { warning } from "framer-motion";
 // import Toast from "../../../toast/Toast";
 
-const createReader = async (username: string, email: string, password: string) => {
+const createReader = async (username: string, email: string, password: string, navigate: any) => {
   try {
     const validatePassword = (password: string) => {
       const passwordRegex = /^[A-Za-z\d]{8,}$/;
@@ -16,7 +16,7 @@ const createReader = async (username: string, email: string, password: string) =
     }
   
     if (!validatePassword(password)) {
-      console.log('Password must be at least 8 characters long');
+      showToastMessage('Password must be at least 8 characters long', warning);
     }
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
@@ -40,9 +40,8 @@ const createReader = async (username: string, email: string, password: string) =
         });
 
         await sendEmailVerification(userCredential.user);
-        console.log('Sign up successful and email verification sent');
         showToastMessage('Sign up successful and email verification sent', 'success');
-        console.log(showToastMessage);
+        navigate('/hive-hub');
       }
       catch (err) {
         await userCredential.user.delete();
@@ -50,20 +49,16 @@ const createReader = async (username: string, email: string, password: string) =
       }
     }
     else {
-      console.log('Sign up failed');
       showToastMessage('Sign up failed', 'error');
-      console.log(showToastMessage);
     }
   }
   catch (err: any) {
     if (err.message.includes('auth/email-already-in-use')) {
-      console.log('User with the same email already exists', 'warning');
       showToastMessage('User with the same email already exists', 'warning');
-      console.log(showToastMessage);
+      navigate('/hive-hub');
     }
     else  {
       showToastMessage(err.message, 'error');
-      console.log(showToastMessage);
     }
   }
 }
@@ -100,17 +95,13 @@ const showToastMessage = (message: any, type: any) => {
 
 const SignUpForm = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(auth.currentUser);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const signedReader = auth.onAuthStateChanged((user: User | null) => {
       setCurrentUser(user);
-      if (user) {
-        navigate('hive-hub');
-      }
     });
     return () => signedReader();
-  }, [currentUser, navigate]);
+  }, [currentUser]);
   
   return (
     <div>

@@ -27,9 +27,9 @@ const database = getDatabase(app);
 // Listen for changes in authentication state
 onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log('User is logged in');
+      return user;
     } else {
-      console.log('User is logged out');
+      return null;
     }
 });
 

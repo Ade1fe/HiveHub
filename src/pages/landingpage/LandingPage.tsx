@@ -162,7 +162,10 @@ const LandingPage = () => {
       </Box>
       
       <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} modalConfig={modalContext === "signin" ? signInConfig : modalContext === "signup" ? signUpConfig : emailConfig} toggleModal={toggleModal} facebookSignUp={facebookSignUp} googleSignUp={googleSignUp} showEmailSignUp={showEmailSignUp} emailConfig={emailConfig} modalContext={modalContext} subtitleText={subtitleText} createReader={createReader} readReader={readReader} />
-      {<GoogleAuth /> || <FacebookAuth />}
+      <>
+        <GoogleAuth />
+        <FacebookAuth />
+      </>
       
       <Toaster
         position='top-right'

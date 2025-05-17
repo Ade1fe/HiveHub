@@ -2,16 +2,14 @@ import { signInWithEmailAndPassword, User } from "firebase/auth";
 import { auth, firestore } from "../../../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "sonner";
 // import Toast from "../../../toast/Toast";
 
 
-const readReader = async (email: string, password: string) => {
+const readReader = async (email: string, password: string, navigate: any) => {
   try {
     if (email === '' || password === '') {
       showToastMessage('Please fill in both email and password.', 'error');
-      console.log(showToastMessage);
       return;
     }
 
@@ -25,21 +23,18 @@ const readReader = async (email: string, password: string) => {
       // @ts-ignore
       const userData = userDoc.data();
       showToastMessage('Sign in successful', 'success');
-      console.log(showToastMessage);
+      navigate('/hive-hub');
     }
     else {
       showToastMessage('No such user found', 'error');
-      console.log(showToastMessage);
     }
   }
   catch (err) {
     if (email === '' || password === '') {
       showToastMessage('Please fill in both email and password.', 'error');
-      console.log(showToastMessage);
     } 
     else {
       showToastMessage('Invalid email or password', 'error');
-      console.log(showToastMessage);
     }
   }
 }
@@ -75,17 +70,13 @@ const showToastMessage = (message: any, type: 'success' | 'error' | 'warning') =
 
 const SignInForm = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(auth.currentUser);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const signedReader = auth.onAuthStateChanged((user: User | null) => {
       setCurrentUser(user);
-      if (user) {
-        navigate('hive-hub');
-      }
     });
     return () => signedReader();
-  }, [currentUser, navigate]);
+  }, [currentUser]);
   
   return (
     <div>

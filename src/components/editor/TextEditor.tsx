@@ -1,13 +1,11 @@
 import { Box } from "@chakra-ui/react";
-import { useEffect } from "react";
 // @ts-ignore
 import { useEditor, EditorContent, BubbleMenu, FloatingMenu, EditorProvider, Editor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit";
-import { MdFormatBold, MdFormatListNumbered, MdFormatItalic, MdLink, MdImage } from "react-icons/md";
-import { BsCodeSlash } from "react-icons/bs";
+import { MdFormatBold, MdFormatListNumbered } from "react-icons/md";
 import { AiTwotoneCode } from "react-icons/ai";
 import { BsTypeItalic, BsBlockquoteLeft } from "react-icons/bs";
-import { PiParagraphLight, PiTextTThin, PiListBulletsBold, PiCodeBlockFill } from "react-icons/pi";
+import { PiTextTThin, PiListBulletsBold, PiCodeBlockFill } from "react-icons/pi";
 import { CiUndo, CiRedo } from "react-icons/ci";
 // const content = '<p>Hello World!</p>'
 

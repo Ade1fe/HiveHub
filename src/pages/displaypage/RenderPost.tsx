@@ -20,11 +20,8 @@ const RenderPost = () => {
             const postData = postSnap.data();
             const parser = new DOMParser();
             const docContent = parser.parseFromString(postData.content, 'text/html');
-            console.log(docContent);
             const mediaElements = Array.from(docContent.querySelectorAll('img, video'));
-            console.log(mediaElements);
             const mediaUrls = mediaElements.map(media => media.getAttribute('src'));
-            console.log(mediaUrls);
             setPost({
               ...postData,
               contentImage: mediaUrls,

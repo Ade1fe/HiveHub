@@ -16,10 +16,6 @@ const DisplayPage = ({ categoryData }: any) => {
        {/* <DisplayComp itemId={itemId || ''} /> */}
        {/* <RenderPage categoryData={categoryData} itemData={{ itemId: itemId || '' }} /> */}
        <RenderPost />
-
-       <div className="">
-        am heee
-       </div>
     </MainLayout>
   );
 }

@@ -2,18 +2,16 @@ import { sendEmailVerification, signInWithPopup, User } from "firebase/auth"
 import { auth, firestore, GoogleUser } from "../../../firebase"
 import { collection, doc, getDoc, getDocs, query, setDoc, where, } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "sonner";
 
 
 //  GOOGLE SIGNUP WITH POPUP FUNCTIONALITY
-export const googleSignUp = async (setError: (message: string) => void) => {
+export const googleSignUp = async (setError: (message: string) => void, navigate: any) => {
   try {
     const resp = await signInWithPopup(auth, GoogleUser);
     const user = resp.user;
-    console.log(user);
 
-    await storeUserData(user, 'Google');
+    await storeUserData(user, 'Google', navigate);
   }
   catch (err: any) {
     if (err.message === 'Email already exists, cannot create new user') {
@@ -27,14 +25,14 @@ export const googleSignUp = async (setError: (message: string) => void) => {
 
 
 //  SIGNING UP USER/READER AND SAVING THEIR DATA
-const storeUserData = async (user: any, provider: string) => {
+const storeUserData = async (user: any, provider: string, navigate: any) => {
   try {
     const checkEmailExists = await emailExists(user.email);
 
     if (checkEmailExists) {
       if (provider === 'Facebook') {
-        console.log('Email already exists, signing in with Facebook');
         showToastMessage('Email already exists, signing in with Facebook', 'warning');
+        navigate('/hive-hub');
         return;
       }
       else {
@@ -59,12 +57,12 @@ const storeUserData = async (user: any, provider: string) => {
 
       await setDoc(userDocRef, userData);
       await sendEmailVerification(user);
-      console.log('Sign up successful and email verification sent');
       showToastMessage('Sign up successful and email verification sent', 'success');
+      navigate('/hive-hub');
     }
     else {
-      console.log('Sign In successful');
       showToastMessage('Sign in successful', 'success');
+      navigate('/hive-hub');
     }
   }
   catch (err) {
@@ -131,17 +129,13 @@ const GoogleAuth = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(auth.currentUser);
   // @ts-ignore
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const signedReader = auth.onAuthStateChanged((user: User | null) => {
       setCurrentUser(user);
-      if (user) {
-        navigate('hive-hub');
-      }
     });
     return () => signedReader();
-  }, [currentUser, navigate]);
+  }, [currentUser]);
 
   return (
     <div>

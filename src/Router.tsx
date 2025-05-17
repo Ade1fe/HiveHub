@@ -10,7 +10,7 @@ const Router = createBrowserRouter([
   },
 
   {
-    path: "hive-hub",
+    path: "/hive-hub",
     element: <Homepage />,
   },
   {
@@ -18,7 +18,7 @@ const Router = createBrowserRouter([
     element: <DisplayPage  />,
   },
   {
-    path: "admin",
+    path: "write",
     element: <WritePage />,
   },
 ]);

@@ -46,7 +46,6 @@ const RenderPage: React.FC<RenderPageProps> = ({ categoryData, itemData }) => {
           if (docSnapshot.exists()) {
             const data = docSnapshot.data() as CategoryDataProps;
             setFetchedCategoryData(data); 
-            console.log("data", data);
             if (data.timestamp) {
               // Parse the timestamp into a Date object
               const parsedTimestamp = new Date(data.timestamp.seconds * 1000); // Firebase timestamp is in seconds
@@ -55,7 +54,6 @@ const RenderPage: React.FC<RenderPageProps> = ({ categoryData, itemData }) => {
               setTimestamp(null);
             }
             if (data.userId) {
-              console.log("Fetching user profile data for user ID:", data.userId);
               await fetchUserProfileData(data.userId);
               console.log("User profile data fetched successfully");
             }

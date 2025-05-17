@@ -8,6 +8,7 @@ import { googleSignUp } from '../pages/auth/google/GoogleAuth';
 import { createReader } from '../pages/auth/signup/SignUpForm';
 import { readReader } from '../pages/auth/signin/SignInForm';
 import { Toaster } from "sonner";
+import { Box } from '@chakra-ui/react'
 
 
 interface MainLayoutProps {
@@ -130,10 +131,11 @@ interface MainLayoutProps {
     <div>
      <Navbar toggleModal={toggleModal} />
      {/* <Header toggleModal={toggleModal} /> */}
-     <div >{children} </div>
+     <Box h={['calc(100dvh - 8rem)', 'calc(100dvh - 8rem)']} pb={['8rem', '4rem']} overflowY="auto" >{children} </Box>
+
+     <Footer />
 
      <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} modalConfig={modalContext === "signin" ? signInConfig : modalContext === "signup" ? signUpConfig : emailConfig} toggleModal={toggleModal} facebookSignUp={facebookSignUp} googleSignUp={googleSignUp} showEmailSignUp={showEmailSignUp} emailConfig={emailConfig} modalContext={modalContext} subtitleText={subtitleText} createReader={createReader} readReader={readReader} />
-      <Footer />
 
       <Toaster
         position='top-right'

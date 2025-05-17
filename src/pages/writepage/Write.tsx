@@ -2,11 +2,10 @@ import { Box, IconButton, Input, Menu, MenuButton, MenuItem, MenuList, Modal, Mo
 import { useEffect, useRef, useState } from "react";
 import { MdAdd } from "react-icons/md";
 import { CiImageOn } from "react-icons/ci";
-import { HiOutlineVideoCamera } from "react-icons/hi";
 import { MdFormatBold } from "react-icons/md";
 import { AiTwotoneCode } from "react-icons/ai";
 import { BsTypeItalic, BsBlockquoteLeft } from "react-icons/bs";
-import { PiTextTThin } from "react-icons/pi";
+import { PiTextTThin, PiVideo } from "react-icons/pi";
 import { CiUndo, CiRedo } from "react-icons/ci";
 import { IoIosColorPalette } from "react-icons/io";
 import { auth, firestore, storage } from "../../firebase";
@@ -35,16 +34,23 @@ const Write = () => {
     const [defaultFontSize, setDefaultFontSize] = useState<number>(20);
     const [currentFontSize, setCurrentFontSize] = useState<number>(defaultFontSize);
     const [currentUser, setCurrentUser] = useState<User | null>(null);
-    const contentEditableRef = useRef<HTMLDivElement>(null);
-    const { isOpen, onOpen, onClose } = useDisclosure();
-
     const [activeButton, setActiveButton] = useState<number | null>(null);
-
-    const initialFontSize = useBreakpointValue({ base: 16, lg: 24 });
-
     const [color, setColor] = useState('#000');
     const [showColorPicker, setShowColorPicker] = useState(false);
+
+    // Refs and hooks
+    const contentEditableRef = useRef<HTMLDivElement>(null);
     const savedRange = useRef<Range | null>(null);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const initialFontSize = useBreakpointValue({ base: 16, md: 18, lg: 24 });
+    
+
+    useEffect(() => {
+      if (initialFontSize) {
+        setCurrentFontSize(initialFontSize);
+      }
+    }, [initialFontSize]);
+
 
     useEffect(() => {
         const author = auth.onAuthStateChanged(async (user: User | null) => {
@@ -58,14 +64,6 @@ const Write = () => {
                     setAuthorUsername(userData.username);
                     setAuthorImage(userData.userImage);
                 }
-                else {
-                    console.log('No such reader in database');
-                    showToastMessage('No such reader in database', 'error')
-                }
-            }
-            else {
-                console.log('Reader is signed in');
-                showToastMessage('Reader is signed in', 'error')
             }
         });
 
@@ -73,44 +71,35 @@ const Write = () => {
     }, []);
 
 
-
-
-
-    useEffect(() => {
-        if (initialFontSize) {
-            setCurrentFontSize(initialFontSize);
-        }
-    }, [initialFontSize]);
-
-
-
-
-
     const handleContentChange = () => {
-        const contentEditable = contentEditableRef.current;
-        if (contentEditable) {
-            // contentEditable.style.fontSize = `${currentFontSize}px`;
-            setContent(contentEditable.innerHTML);
-            if (contentEditable.innerHTML.trim() === '') {
-                contentEditable.innerHTML = '<p class="placeholder">Your content</p>';
-                contentEditable.style.color = 'gray.400';
-            }
+      const contentEditable = contentEditableRef.current;
+      if (contentEditable) {
+        setContent(contentEditable.innerHTML);
+        contentEditable.style.height = 'auto';
+        contentEditable.style.height = `${contentEditable.scrollHeight}px`;
+
+        if (contentEditable.innerHTML.trim() === '') {
+          contentEditable.innerHTML = '<p class="placeholder">Your content</p>';
+          contentEditable.style.color = 'gray.400';
         }
+      }
     };
 
 
-
-
-
     const changeFontSize = (increment: number, buttonNumber: number) => {
-        let newSize = currentFontSize;
-        if (activeButton === buttonNumber) {
-            newSize = defaultFontSize; // reset to default if the same button is clicked again
-            setActiveButton(null); // reset the active button
-        } else {
-            newSize += increment;
-            setActiveButton(buttonNumber); // set the active button
-        }
+        // let newSize = currentFontSize;
+        // if (activeButton === buttonNumber) {
+        //     newSize = defaultFontSize; // reset to default if the same button is clicked again
+        //     setActiveButton(null); // reset the active button
+        // } else {
+        //     newSize += increment;
+        //     setActiveButton(buttonNumber); // set the active button
+        // }
+
+        const newSize = activeButton === buttonNumber ? initialFontSize || 16 : (initialFontSize || 16) + increment;
+        setCurrentFontSize(newSize);
+        setActiveButton(activeButton === buttonNumber ? null : buttonNumber);
+
         const contentEditable = contentEditableRef.current;
 
         if (contentEditable) {
@@ -150,35 +139,53 @@ const Write = () => {
 
 
 
-    const insertText = (value: string = '', command: string) => {
-        const contentEditable = contentEditableRef.current;
-        if (contentEditable) {
-            const selection = window.getSelection();
-            const selectedText = selection?.toString();
+    // const insertText = (command: string, value: string = '') => {
+    //     const contentEditable = contentEditableRef.current;
+    //     if (contentEditable) {
+    //         const selection = window.getSelection();
+    //         const selectedText = selection?.toString();
             
-            // if (selectedText) {
-            //     console.log("Selected text:", selectedText);
-            // } else {
-            //     console.log("No text selected");
-            // }
-            if (command === 'codeBlock') {
-                const codeBlock = `<pre><code>${selectedText}</code></pre>`;
-                insertAtCursor(codeBlock);
-            } else if (command === 'blockquote') {
-                const blockquote = `<blockquote>${selectedText}</blockquote>`;
-                insertAtCursor(blockquote);
-            } else if (command === 'foreColor') {
-                document.execCommand('foreColor', false, color);
-                handleContentChange();
-            } else {
-                document.execCommand(command, false, value);
-                handleContentChange();
-            }
-        }
+    //         // if (selectedText) {
+    //         //     console.log("Selected text:", selectedText);
+    //         // } else {
+    //         //     console.log("No text selected");
+    //         // }
+    //         if (command === 'codeBlock') {
+    //             const codeBlock = `<pre><code>${selectedText}</code></pre>`;
+    //             insertAtCursor(codeBlock);
+    //         } else if (command === 'blockquote') {
+    //             const blockquote = `<blockquote>${selectedText}</blockquote>`;
+    //             insertAtCursor(blockquote);
+    //         } else if (command === 'foreColor') {
+    //             document.execCommand('foreColor', false, color);
+    //             handleContentChange();
+    //         } else {
+    //             document.execCommand(command, false, value);
+    //             handleContentChange();
+    //         }
+    //     }
+    // };
+
+
+    const insertText = (command: string, value: string = '') => {
+      const contentEditable = contentEditableRef.current;
+      if (!contentEditable) return;
+
+      contentEditable.focus();
+      const selection = window.getSelection();
+      const selectedText = selection?.toString();
+
+      if (command === 'foreColor') {
+        document.execCommand('foreColor', false, color);
+      } else if (command === 'codeBlock') {
+        insertAtCursor(`<pre><code>${selectedText}</code></pre>`);
+      } else if (command === 'blockquote') {
+        insertAtCursor(`<blockquote>${selectedText}</blockquote>`);
+      } else {
+        document.execCommand(command, false, value);
+      }
+      handleContentChange();
     };
-
-
-
 
 
     const insertAtCursor = (html: string) => {
@@ -207,12 +214,8 @@ const Write = () => {
                 sel.addRange(range);
             }
         }
-
         handleContentChange();
     };
-
-
-
 
 
     const handleFileUpload = async (type: string) => {
@@ -240,48 +243,9 @@ const Write = () => {
         input.click();
     }
 
-    
-
-    // const addCodeBlock = () => {
-    //     const codeBlock = `\n<pre><code>// New code block\n</code></pre>\n`;
-    //     insertAtCursor(codeBlock);
-    // }
-
-    // const addEmbeddedCode = () => {
-    //     const embeddedCode = `\n<iframe src="https://example.com"></iframe>\n`;
-    //     insertText(embeddedCode, 'inserHTML');
-    // }
-
-
-
-
-
-    useEffect(() => {
-        if (contentEditableRef.current && contentEditableRef.current.innerHTML.trim() === '') {
-            contentEditableRef.current.innerHTML = '<p class="placeholder">Your content</p>';
-        }
-    }, []);
-
-    const handleBlur = () => {
-        if (contentEditableRef.current && contentEditableRef.current.innerHTML.trim() === '') {
-            contentEditableRef.current.innerHTML = '<p class="placeholder">Your content</p>';
-        }
-    };
-
-
-    const handleFocus = () => {
-        if (contentEditableRef.current && contentEditableRef.current.innerHTML === '<p class="placeholder">Your content</p>') {
-            contentEditableRef.current.innerHTML = '';
-        }
-    };
-
-
-
-
 
     const savePost = async () => {
         if (!currentUser) {
-            console.log('User is not authenticated');
             showToastMessage('Reader is not authenticated', 'warning');
             return;
         }
@@ -305,11 +269,10 @@ const Write = () => {
                 setTopic('');
                 setContent('');
                 setMediaUrls([]);
-                console.log('Post saved successfully');
-                showToastMessage('Post saved', 'success')
-            }
-            else {
-                console.error('contentEditableRef is not initialized');
+                if (contentEditableRef.current) {
+                  contentEditableRef.current.innerHTML = '<p class="placeholder">Your content</p>';
+                }
+                showToastMessage('Post published successfully', 'success')
             }
         }
         catch (err) {
@@ -317,39 +280,6 @@ const Write = () => {
             showToastMessage(err, 'error')
         }
     };
-
-    
-    const handleContinue = () => {
-        if (title.trim() !== '' && content.trim() !== '') {
-            onOpen();
-        }
-        else {
-            console.log('Title or content is empty');
-            showToastMessage('Please fill the title or post content', 'warning');
-        }
-    }
-
-
-    const handleSave = (e: any) => {
-        e.preventDefault();
-        if (!currentUser) {
-            console.log('User is not authenticated');
-            showToastMessage('Reader is not authenticated', 'warning');
-            return;
-        }
-        if (topic.trim() !== '') {
-            savePost();
-            onClose();
-        }
-        else {
-            console.log('Topic is empty');
-            showToastMessage('Please fill the post Topic', 'warning');
-
-        }
-    }
-
-
-
 
 
     const handleColorChange = (color: any) => {
@@ -376,11 +306,7 @@ const Write = () => {
     };
 
 
-
-
-
-
-        //   CONFIGURING TOAST TO TOAST MESSAGE
+    //   CONFIGURING TOAST TO TOAST MESSAGE
     const showToastMessage = (message: any, type: 'success' | 'error' | 'warning') => {
         switch (type) {
             case 'success':
@@ -407,14 +333,54 @@ const Write = () => {
     };
 
 
+    const handleContinue = () => {
+        if (title.trim() !== '' && content.trim() !== '') {
+            onOpen();
+        }
+        else {
+            showToastMessage('Please fill the title or post content', 'warning');
+        }
+    }
+
+
+    const handleSave = (e: any) => {
+        e.preventDefault();
+        if (topic.trim() !== '') {
+          showToastMessage('Please fill the post Topic', 'warning');
+          return;
+        }
+        savePost();
+        onClose();
+    }    
+
+
+    const handleFocus = () => {
+        if (contentEditableRef.current && contentEditableRef.current.innerHTML === '<p class="placeholder">Your content</p>') {
+            contentEditableRef.current.innerHTML = '';
+        }
+    };
+
+
+    const handleBlur = () => {
+        if (contentEditableRef.current && contentEditableRef.current.innerHTML.trim() === '') {
+            contentEditableRef.current.innerHTML = '<p class="placeholder">Your content</p>';
+        }
+    };
+
+
+    useEffect(() => {
+        if (contentEditableRef.current && contentEditableRef.current.innerHTML.trim() === '') {
+            contentEditableRef.current.innerHTML = '<p class="placeholder">Your content</p>';
+        }
+    }, []);
 
       
 
     
   return (
-    <Box display='flex' flexDir='column' w='100%' alignItems='center' justifyContent='center' gap={['20px', '10px']} px={[4,4,4,4,2,0]} py='30px' maxW={['90%', "65%"]} mx='auto'>
-        <Input type='text' value={title} onChange={(e) => setTitle(e.target.value)} variant='unstyled' focusBorderColor='white' placeholder='Title' _placeholder={{ opacity: 1, color: 'gray.400', fontSize: ['25px', '40px'] }} fontSize={['25px', '40px']} size='lg' alignItems='center' justifyContent='center' display='flex' py='10px' px='10px' />
-        <Box width='100%' pos='relative' display='flex' flexDir='column'>
+    <Box display='flex' flexDir='column' w='100%' alignItems='center' justifyContent='center' gap={['20px', '10px']} px={[0, 4, 6]} py={[4, 6, 8]} maxW={['95%', '90%', "65%"]} mx='auto'>
+        <Input type='text' value={title} onChange={(e) => setTitle(e.target.value)} variant='unstyled' focusBorderColor='white' placeholder='Title' _placeholder={{ opacity: 1, color: 'gray.400', fontSize: ['xl', '2xl', '3xl'] }} fontSize={['xl', '2xl', '3xl']} size='lg' alignItems='center' justifyContent='center' display='flex' py={2} px={4} />
+        {/* <Flex align="center" mb={2} wrap="nowrap" gap={1} width='100%' pos='relative' display='flex' >
             <Menu>
                 <MenuButton
                     as={IconButton}
@@ -422,59 +388,36 @@ const Write = () => {
                     icon={<MdAdd />}
                     variant='outline'
                     borderRadius='50%'
+                    size="sm"
                     fontSize='25px'
                     fontWeight='400'
                     transition='all 0.2s'
                     borderWidth='1px'
                     _focus={{ boxShadow: 'flushed' }}
-                    pos='absolute'
-                    ml={['-11%', '-7%']}
                 />
-                <MenuList display='flex' alignItems='center' justifyContent='space-between' px='7px' py='5px' border='none' shadow='none'>
+                <MenuList shadow='sm' w='auto'>
                     <MenuItem w='30px' h='30px' border='gray.300' borderWidth='1px' borderRadius='50%' color='blue.500' display='flex' background='none' alignItems='center' justifyContent='center' _hover={{ background: 'none', cursor: 'pointer' }} p='3px' fontSize='x-large' onClick={() => handleFileUpload('image')}><CiImageOn /></MenuItem >
                     <MenuItem w='30px' h='30px' border='gray.300' borderWidth='1px' borderRadius='50%' color='blue.500' display='flex' background='none' alignItems='center' justifyContent='center' _hover={{ background: 'none', cursor: 'pointer' }} p='3px' fontSize='x-large' onClick={() => handleFileUpload('video')}><HiOutlineVideoCamera /></MenuItem >
-                    {/* <MenuItem w='30px' h='30px' border='gray.300' borderWidth='1px' borderRadius='50%' color='blue.500' display='flex' background='none' alignItems='center' justifyContent='center' _hover={{ background: 'none', cursor: 'pointer' }} p='3px' fontSize='x-large' onClick={addCodeBlock}><HiOutlineCodeBracket /></MenuItem >
-                    <MenuItem w='30px' h='30px' border='gray.300' borderWidth='1px' borderRadius='50%' color='blue.500' display='flex' background='none' alignItems='center' justifyContent='center' _hover={{ background: 'none', cursor: 'pointer' }} p='3px' fontSize='x-large' onClick={addEmbeddedCode}><PiBracketsCurly /></MenuItem > */}
                 </MenuList>
             </Menu>
 
             <Box>
-                <Box display='flex' px='6px' py='6px' gap='10px' h='50px' >
-                    <Button p='4px' background='white' fontSize='20px' onClick={() => insertText('insertHTML', 'bold')}>
-                        <MdFormatBold fontWeight='500'/>
-                    </Button>
-                    <Button p='4px' background='white' fontSize='18px' onClick={() => insertText('insertHTML', 'italic')}>
-                        <BsTypeItalic fontWeight='500'/>
-                    </Button>
-                    <Divider orientation='vertical' />
-                    <Button p='4px' background='white' fontSize='22px' onClick={() => changeFontSize(4, 1)}>
-                        <PiTextTThin fontWeight='800' color={activeButton === 1 ? 'green' : 'gray'} />
-                    </Button>
-                    <Button p='4px' background='white' fontSize='18px' onClick={() => changeFontSize(2, 2)}>
-                        <PiTextTThin fontWeight='500' color={activeButton === 2 ? 'green' : 'gray'} />
-                    </Button>
-                    <Flex w='10px' />
-                    <Button p='4px' background='white' fontSize='18px' onClick={() => insertText('', 'codeBlock')}>
-                        <AiTwotoneCode fontWeight='500'/>
-                    </Button>
-                    <Button p='4px' background='white' fontSize='18px' onClick={toggleColorPicker}>
-                        <IoIosColorPalette fontWeight='500'/>
-                    </Button>
-                    <Button p='4px' background='white' fontSize='18px' onClick={() => insertText('', 'blockquote')}>
-                        <BsBlockquoteLeft fontWeight='500'/>
-                    </Button>
-                    <Flex w='15px' />
-                    <Button p='4px' background='white' fontSize='18px' onClick={() => insertText('insertHTML', 'undo')}>
-                        <CiUndo fontWeight='500'/>
-                    </Button>
-                    <Button p='4px' background='white' fontSize='18px' onClick={() => insertText('insertHTML', 'redo')}>
-                        <CiRedo fontWeight='500'/>
-                    </Button>
+                <Box display='flex' px='6px' py='6px' h='50px' >
+                    <IconButton aria-label="Bold" icon={<MdFormatBold />} size="md" onClick={() => insertText('bold')} />
+                    <IconButton aria-label="Italic" icon={<BsTypeItalic />} size="md" onClick={() => insertText('italic')} />
+                    <Divider orientation="vertical" h="24px" />
+                    <IconButton aria-label="Increase font" icon={<PiTextTThin />} size="md" onClick={() => changeFontSize(4, 1)} color={activeButton === 1 ? 'green.500' : 'gray.500'} />
+                    <IconButton aria-label="Decrease font" icon={<PiTextTThin />} size="md" onClick={() => changeFontSize(-2, 2)} color={activeButton === 2 ? 'green.500' : 'gray.500'} />
+                    <IconButton aria-label="Code block" icon={<AiTwotoneCode />} size="md" onClick={() => insertText('codeBlock')} />
+                    <IconButton aria-label="Text color" icon={<IoIosColorPalette />} size="md" onClick={toggleColorPicker} />
+                    <IconButton aria-label="Blockquote" icon={<BsBlockquoteLeft />} size="md" onClick={() => insertText('blockquote')} />
+                    <IconButton aria-label="Undo" icon={<CiUndo />} size="md" onClick={() => insertText('undo')} />
+                    <IconButton aria-label="Redo" icon={<CiRedo />} size="md" onClick={() => insertText('redo')} />
                 </Box>
                 <Box contentEditable='true' className="scroll" onInput={handleContentChange} onFocus={handleFocus} onBlur={handleBlur} ref={contentEditableRef} resize='none' px='10px' py='10px' color='gray.600' _placeholder={{ opacity: 1, color: 'gray.400', fontSize: ['16px', '24px'] }} fontSize={['16px', '24px']} style={{ minHeight: '50px', color: 'gray.800', overflowY: 'auto', fontSize: `${currentFontSize}px` }} border='none' _focus={{ border: 'none~' }} ></Box>
             </Box>
             <Button onClick={handleContinue} mt='20px' colorScheme='blue' ml='auto' borderRadius='1000px'>Continue</Button>
-        </Box>
+        </Flex>
         <Modal isCentered isOpen={isOpen} onClose={onClose} size={['xs', 'md', 'lg']} >
             <ModalOverlay background='white' backdropFilter='blur(50px) hue-rotate(90deg)' />
             <ModalContent>
@@ -493,11 +436,82 @@ const Write = () => {
                     </Button>
                 </ModalFooter>
             </ModalContent>
-        </Modal>
+        </Modal> */}
 
-        {showColorPicker && (
-            <CirclePicker color={color} onChangeComplete={handleColorChange} />
-        )}
+        <Flex align="center" mb={2} wrap="wrap" gap={[2.5]} width='100%' alignItems='start' justifyContent={['start', 'space-between']}>
+            <Menu>
+              <MenuButton
+                as={IconButton}
+                aria-label='Add media'
+                icon={<MdAdd />}
+                variant='outline'
+                transition='all 0.2s'
+                borderWidth='1px'
+                _focus={{ boxShadow: 'flushed' }}
+              />
+              <MenuList w='2rem' py={1} px={1}>
+                <MenuItem icon={<CiImageOn size='1.5rem' />} onClick={() => handleFileUpload('image')}>
+                  Add Image
+                </MenuItem>
+                <MenuItem icon={<PiVideo size='1.5rem' />} onClick={() => handleFileUpload('video')}>
+                  Add Video
+                </MenuItem>
+              </MenuList>
+            </Menu>
+
+            <Flex display='flex' justifyContent='center' py='4px' gap={[1.5, 2]}>
+              <IconButton aria-label="Bold" icon={<MdFormatBold />} size={['base']} w={['2.063rem', '2.5rem']} onClick={() => insertText('bold')} />
+              <IconButton aria-label="Italic" icon={<BsTypeItalic />} size={['base']} w={['2.063rem', '2.5rem']} onClick={() => insertText('italic')} />
+              <Divider orientation="vertical" h={['30px', "39px"]} />
+              <IconButton aria-label="Increase font" icon={<PiTextTThin />} size={['base']} w={['2.063rem', '2.5rem']} onClick={() => changeFontSize(4, 1)} color={activeButton === 1 ? 'green.500' : 'gray.500'} />
+              <IconButton aria-label="Decrease font" icon={<PiTextTThin />} size={['base']} w={['2.063rem', '2.5rem']} onClick={() => changeFontSize(-2, 2)} color={activeButton === 2 ? 'green.500' : 'gray.500'} />
+              <IconButton aria-label="Code block" icon={<AiTwotoneCode />} size={['base']} w={['2.063rem', '2.5rem']} onClick={() => insertText('codeBlock')} />
+              <IconButton aria-label="Text color" icon={<IoIosColorPalette />} size={['base']} w={['2.063rem', '2.5rem']} onClick={toggleColorPicker} />
+              <IconButton aria-label="Blockquote" icon={<BsBlockquoteLeft />} size={['base']} w={['2.063rem', '2.5rem']} onClick={() => insertText('blockquote')} />
+              <IconButton aria-label="Undo" icon={<CiUndo />} size={['base']} w={['2.063rem', '2.5rem']} onClick={() => insertText('undo')} />
+              <IconButton aria-label="Redo" icon={<CiRedo />} size={['base']} w={['2.063rem', '2.5rem']} onClick={() => insertText('redo')} />
+            </Flex>
+        </Flex>
+
+          {/* Content Editable Area */}
+        <Box ref={contentEditableRef} contentEditable onInput={handleContentChange} onFocus={handleFocus} onBlur={handleBlur} className="scroll" px={3} py={2} h='12.5rem' minH="12.5rem" w='100%' overflowY="auto" borderWidth="1px" borderRadius="md" borderColor="gray.200" fontSize={`${currentFontSize}px`} lineHeight="1.6" color='gray.600' _placeholder={{ opacity: 1, color: 'gray.400', fontSize: ['16px', '24px'] }} style={{ minHeight: '50px', color: 'gray.800', overflowY: 'auto', fontSize: `${currentFontSize}px` }} _focus={{ border: 'none~' }} />
+
+          {showColorPicker && (
+            <Box>
+              <CirclePicker 
+                color={color} 
+                onChangeComplete={handleColorChange} 
+              />
+            </Box>
+          )}
+
+          <Button onClick={handleContinue} mt={6} ml="auto" colorScheme="blue" borderRadius="full" size="lg" >
+            Continue
+          </Button>
+
+          {/* Publish Modal */}
+          <Modal isOpen={isOpen} onClose={onClose} size={['sm', 'md', 'lg']}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Content preview</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={6}>
+                <FormControl>
+                  <FormLabel>Add topic (up to 5)</FormLabel>
+                  <Input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="Add a topic" variant="flushed" size="lg" />
+                </FormControl>
+              </ModalBody>
+              <ModalFooter>
+                <Button colorScheme="blue" onClick={handleSave} borderRadius="full" >
+                  Publish
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+
+        {/* {showColorPicker && (
+          <CirclePicker color={color} onChangeComplete={handleColorChange} />
+        )} */}
 
         <Toast showToast={showToastMessage} />
     </Box>

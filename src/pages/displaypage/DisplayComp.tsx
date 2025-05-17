@@ -23,7 +23,6 @@ const DisplayComp: React.FC<DisplayPageProps> = ({ itemId }) => {
         if (docSnapshot.exists()) {
           const data = docSnapshot.data();
           setCategoryData(data); 
-          console.log("data", data);
           if (data.timestamp) {
             // Parse the timestamp into a Date object
             const parsedTimestamp = new Date(data.timestamp.seconds * 1000); // Firebase timestamp is in seconds
@@ -45,10 +44,10 @@ const DisplayComp: React.FC<DisplayPageProps> = ({ itemId }) => {
   return (
     <Box p={4}>
      <div className="">
-        <Text>{timestamp?.toLocaleString() || ""}</Text>
-        <Image boxSize='80px' borderRadius='50%' src={blogimg} />
-        <Text>Oluwadamisi Damilola</Text>
-        <Text>Follow</Text>
+      <Text>{timestamp?.toLocaleString() || ""}</Text>
+      <Image boxSize='80px' borderRadius='50%' src={blogimg} />
+      <Text>Oluwadamisi Damilola</Text>
+      <Text>Follow</Text>
      </div>
       {/* {categoryData && <RenderPage categoryData={categoryData} />} */}
     </Box>

@@ -51,14 +51,12 @@ const TabsCard = () => {
                             const url = await getDownloadURL(ref(storage, path));
                             return url;
                         } catch (error) {
-                            console.error(`Error fetching media URL for path ${path}: `, error);
-                            showToastMessage(`Error fetching media URL for path ${path}`, 'error');
+                            // showToastMessage(`Error fetching media URL for path ${path}`, 'error');
                             return blogimg; // Return default image on error
                         }
                     }));
 
 
-                    console.log('Formatted Timestamp:', formattedTimestamp);
                     return {
                         id: doc.id,
                         title: data.title,
@@ -75,7 +73,6 @@ const TabsCard = () => {
                 setPosts(postsArray);
             }
             catch (err) {
-                console.error('Error fetching posts: ', err);
                 showToastMessage('Error fetching posts: ', 'error');
             }
         }

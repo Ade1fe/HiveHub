@@ -1,31 +1,59 @@
-# React + TypeScript + Vite
+# 🐝 HiveHub – Social Post Web App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+HiveHub is a dynamic, modern web platform where users can create, share, like, comment, and report posts in real-time. Designed with scalability and collaboration in mind, HiveHub brings people together in an interactive social environment.
 
-Currently, two official plugins are available:
+Built with **React**, **TypeScript**, and **Vite** – by [Oluwadamisi Damilola](https://github.com/Ade1fe) and [Tubi Obalulowa](https://github.com/TubiOb).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![HiveHub Preview](https://hive-hub.netlify.app/)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## ✨ Key Features
 
-- Configure the top-level `parserOptions` property like this:
+- 📝 **Create Posts** – Share your thoughts with text, images, or links
+- ❌ **Delete Posts** – Remove your own posts any time
+- ❤️ **Like System** – Like and unlike posts in real-time
+- 💬 **Comments** – Engage with others via post discussions
+- 🚩 **Report Content** – Flag inappropriate posts for moderation
+- 🔁 **Post Sharing** – Share interesting posts with others
+- 🔍 **User Feed** – View all posts by other HiveHub users
+- 🔐 **Authentication** – Secure login/signup support (Firebase/Auth0/etc.)
+- 🌙 **Dark Mode** – Clean and modern UI with light/dark theme toggle
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+---
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
-# HiveHub
+## 🛠️ Tech Stack
+
+| Layer             | Technology                              |
+|------------------|------------------------------------------|
+| **Frontend**      | React + TypeScript + Vite               |
+| **Styling**       | Tailwind CSS / CSS Modules              |
+| **State Management** | React Context / Redux Toolkit (optional) |
+| **Backend/Database** | Firebase / Firestore / Supabase (optional) |
+| **Hosting**       | Vercel / Netlify / Firebase Hosting     |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js v18+
+- npm or yarn
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/hivehub.git
+cd hivehub
+
+# Install dependencies
+npm install
+# or
+yarn install
+
+# Start the dev server
+npm run dev
+# or
+yarn dev

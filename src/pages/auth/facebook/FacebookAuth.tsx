@@ -63,6 +63,7 @@ const storeUserData = async (user: any, provider: string, navigate: any) => {
     }
   } catch (err) {
     console.log('Invalid User');
+    showToastMessage('Authentication failed: ' + err, 'error');
   }
 };
 

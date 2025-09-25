@@ -28,7 +28,7 @@ const createReader = async (username: string, email: string, password: string, n
     const readerId = userCredential.user.uid;
 
     try {
-      const userDocRef = doc(firestore, 'Reader');
+      const userDocRef = doc(firestore, 'Reader', readerId);
 
       const response = await fetch(defaultImageFile);
       const defaultImageBlob = await response.blob();

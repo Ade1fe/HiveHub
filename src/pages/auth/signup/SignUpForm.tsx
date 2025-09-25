@@ -1,71 +1,81 @@
 import { createUserWithEmailAndPassword, sendEmailVerification, User } from "firebase/auth"
 import { auth, firestore, storage } from "../../../firebase"
-import { addDoc, collection, } from "firebase/firestore";
+import { doc, setDoc, } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import defaultImageFile from '../../../assets/user.png'
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Toaster, toast } from "sonner";
-import { warning } from "framer-motion";
 // import Toast from "../../../toast/Toast";
 
 const createReader = async (username: string, email: string, password: string, navigate: any) => {
+  if (!username.trim() || !email.trim() || !password.trim()) {
+    showToastMessage('Please fill in all fields', 'error');
+    return;
+  }
+
+  const validatePassword = (password: string) => {
+    const passwordRegex = /^[A-Za-z\d]{8,}$/;
+    return passwordRegex.test(password);
+  }
+
+  if (!validatePassword(password)) {
+    showToastMessage('Password must be at least 8 characters long', 'warning');
+    return;
+  }
+
   try {
-    const validatePassword = (password: string) => {
-      const passwordRegex = /^[A-Za-z\d]{8,}$/;
-      return passwordRegex.test(password);
-    }
-  
-    if (!validatePassword(password)) {
-      showToastMessage('Password must be at least 8 characters long', warning);
-    }
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const readerId = userCredential.user.uid;
 
-    if (userCredential && userCredential.user) {
-      const readerId = userCredential.user.uid;
-      try {
-        const userDocRef = collection(firestore, 'Reader');
+    try {
+      const userDocRef = doc(firestore, 'Reader');
 
-        const response = await fetch(defaultImageFile);
-        const defaultImageBlob = await response.blob();
+      const response = await fetch(defaultImageFile);
+      const defaultImageBlob = await response.blob();
 
-        const defaultImageRef = ref(storage, `userImages/${readerId}/user.png`);
-        await uploadBytes(defaultImageRef, defaultImageBlob);
+      const defaultImageRef = ref(storage, `userImages/${readerId}/user.png`);
+      await uploadBytes(defaultImageRef, defaultImageBlob);
 
-        const userImageUrl = await getDownloadURL(defaultImageRef);
+      const userImageUrl = await getDownloadURL(defaultImageRef);
 
-        await addDoc(userDocRef, {
-          username: username,
-          email: email,
-          userImage: userImageUrl,
-        });
+      await setDoc(userDocRef, {
+        username: username,
+        email: email,
+        userImage: userImageUrl,
+        createdAt: new Date().toISOString(),
+      });
 
-        await sendEmailVerification(userCredential.user);
-        showToastMessage('Sign up successful and email verification sent', 'success');
-        navigate('/hive-hub');
-      }
-      catch (err) {
-        await userCredential.user.delete();
-        throw err;
-      }
+      await sendEmailVerification(userCredential.user);
+      showToastMessage('Sign up successful and email verification sent', 'success');
+      navigate('/hive-hub');
     }
-    else {
-      showToastMessage('Sign up failed', 'error');
+    catch (err) {
+      await userCredential.user.delete();
+      throw err;
     }
   }
   catch (err: any) {
-    if (err.message.includes('auth/email-already-in-use')) {
-      showToastMessage('User with the same email already exists', 'warning');
-      navigate('/hive-hub');
-    }
-    else  {
-      showToastMessage(err.message, 'error');
+    switch (err.code) {
+      case 'auth/email-already-in-use':
+        showToastMessage('User with this email already exists', 'warning');
+        // ✅ Don't navigate on error
+        break;
+      case 'auth/weak-password':
+        showToastMessage('Password is too weak', 'error');
+        break;
+      case 'auth/invalid-email':
+        showToastMessage('Invalid email format', 'error');
+        break;
+      default:
+        showToastMessage('Sign up failed. Please try again', 'error');
+        break;
     }
   }
 }
 
 
   //   CONFIGURING TOAST TO TOAST MESSAGE
-const showToastMessage = (message: any, type: any) => {
+const showToastMessage = (message: string, type: 'success' | 'error' | 'warning') => {
   switch (type) {
       case 'success':
           toast.success(message, {
@@ -94,6 +104,7 @@ const showToastMessage = (message: any, type: any) => {
   };
 
 const SignUpForm = () => {
+  // @ts-ignore
   const [currentUser, setCurrentUser] = useState<User | null>(auth.currentUser);
 
   useEffect(() => {
@@ -101,7 +112,7 @@ const SignUpForm = () => {
       setCurrentUser(user);
     });
     return () => signedReader();
-  }, [currentUser]);
+  }, []);
   
   return (
     <div>

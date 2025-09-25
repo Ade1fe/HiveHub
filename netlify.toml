@@ -4,6 +4,11 @@ command = 'npm run build'
 publish = 'dist'
 base = '/'
 
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_FLAGS = "--legacy-peer-deps --force"
+  ROLLUP_DISABLE_NATIVE = "true"
+
 [[redirects]]
 from = "/*"
 to = "/index.html"

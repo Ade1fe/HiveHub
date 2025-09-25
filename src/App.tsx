@@ -14,7 +14,8 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         return user;
-      } else {
+      }
+      else {
         return null;
       }
     });

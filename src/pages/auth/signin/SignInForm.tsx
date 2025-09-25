@@ -7,11 +7,12 @@ import { toast, Toaster } from "sonner";
 
 
 const readReader = async (email: string, password: string, navigate: any) => {
+  if (email === '' || password === '') {
+    showToastMessage('Please fill in both email and password.', 'error');
+    return;
+  }
+
   try {
-    if (email === '' || password === '') {
-      showToastMessage('Please fill in both email and password.', 'error');
-      return;
-    }
 
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const readerId = userCredential.user.uid;
@@ -29,12 +30,23 @@ const readReader = async (email: string, password: string, navigate: any) => {
       showToastMessage('No such user found', 'error');
     }
   }
-  catch (err) {
-    if (email === '' || password === '') {
-      showToastMessage('Please fill in both email and password.', 'error');
-    } 
-    else {
-      showToastMessage('Invalid email or password', 'error');
+  catch (err: any) {
+    switch (err.code) {
+      case 'auth/user-not-found':
+        showToastMessage('No account found with this email', 'error');
+        break;
+      case 'auth/wrong-password':
+        showToastMessage('Incorrect password', 'error');
+        break;
+      case 'auth/invalid-email':
+        showToastMessage('Invalid email format', 'error');
+        break;
+      case 'auth/too-many-requests':
+        showToastMessage('Too many failed attempts. Please try again later', 'error');
+        break;
+      default:
+        showToastMessage('Sign in failed. Please try again', 'error');
+        break;
     }
   }
 }
@@ -69,6 +81,7 @@ const showToastMessage = (message: any, type: 'success' | 'error' | 'warning') =
   };
 
 const SignInForm = () => {
+  // @ts-ignore
   const [currentUser, setCurrentUser] = useState<User | null>(auth.currentUser);
 
   useEffect(() => {
@@ -76,7 +89,7 @@ const SignInForm = () => {
       setCurrentUser(user);
     });
     return () => signedReader();
-  }, [currentUser]);
+  }, []);
   
   return (
     <div>

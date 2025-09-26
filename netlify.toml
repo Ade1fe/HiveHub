@@ -5,7 +5,7 @@ publish = 'dist'
 base = '/'
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "18.18.0"
   NPM_FLAGS = "--legacy-peer-deps --force"
   ROLLUP_DISABLE_NATIVE = "true"
 

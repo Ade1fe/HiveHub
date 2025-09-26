@@ -2,17 +2,19 @@ import { Box, Button, Image, Text, useBreakpointValue } from "@chakra-ui/react"
 import { AnimatePresence, motion } from "framer-motion";
 import reader from '../../assets/woman-using-digital-tablet-technology.png'
 import { CustomModal, Footer, Header } from "../../components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
 import { facebookSignUp, FacebookAuth } from './../auth/facebook/FacebookAuth';
 import { googleSignUp, GoogleAuth } from './../auth/google/GoogleAuth';
 import { createReader } from './../auth/signup/SignUpForm';
 import { readReader } from './../auth/signin/SignInForm';
-import { Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
 
 const LandingPage = () => {
+  const navigate = useNavigate();
   const initialWidth = useBreakpointValue({ base: '25px', md: '35px' });
   const exitWidth = useBreakpointValue({ base: '25px', md: '35px' });
   const animateWidth = useBreakpointValue({ base: '50%', md: '25%' });
@@ -25,6 +27,7 @@ const LandingPage = () => {
   const [isSignInOpen, setIsSignInOpen] = useState(false);
   const [showEmailSignUp, setShowEmailSignUp] = useState(false);
   const [modalContext, setModalContext] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const toggleModal = (configType: string) => {
     if (configType === 'signin') {
@@ -56,7 +59,12 @@ const LandingPage = () => {
   };
 
   // console.log(isSignInOpen);
-
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      setError(null);
+    }
+  }, [error]);
   
   const getEmailSubtitleAndContext = (modalConfig: any) => {
     // console.log("Modal Config in getSubtitleAndContext:", modalConfig);
@@ -91,8 +99,8 @@ const LandingPage = () => {
   const signUpConfig = {
     title: 'Come aboard Hivehub',
     buttons: [
-      { onClick: googleSignUp, icon: <FcGoogle className='google' />, text: 'Google', setAuthMethod: 'google', },
-      { onClick: facebookSignUp, icon: <BsFacebook className='facebook' />, text: 'Facebook', setAuthMethod: 'facebook', },
+      { onClick: () => googleSignUp((errorMsg) =>setError(errorMsg), navigate), icon: <FcGoogle className='google' />, text: 'Google', setAuthMethod: 'google', },
+      { onClick: () => facebookSignUp((errorMsg) =>setError(errorMsg), navigate), icon: <BsFacebook className='facebook' />, text: 'Facebook', setAuthMethod: 'facebook', },
       { onClick: emailSignUp, icon: <HiOutlineMail className='email' />, text: 'Email', },
     ],
     texts: [
@@ -104,8 +112,8 @@ const LandingPage = () => {
   const signInConfig = {
     title: 'Welcome back.',
     buttons: [
-      { onClick: googleSignUp, icon: <FcGoogle className='google' />, text: 'Google', setAuthMethod: 'google', },
-      { onClick: facebookSignUp, icon: <BsFacebook className='facebook' />, text: 'Facebook', setAuthMethod: 'facebook', },
+      { onClick: () => googleSignUp((errorMsg) =>setError(errorMsg), navigate), icon: <FcGoogle className='google' />, text: 'Google', setAuthMethod: 'google', },
+      { onClick: () => facebookSignUp((errorMsg) =>setError(errorMsg), navigate), icon: <BsFacebook className='facebook' />, text: 'Facebook', setAuthMethod: 'facebook', },
       { onClick: emailSignUp, icon: <HiOutlineMail className='email' />, text: 'Email', },
     ],
     texts: [

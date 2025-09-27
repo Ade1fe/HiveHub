@@ -1,42 +1,62 @@
-import { sendEmailVerification, signInWithPopup, User } from "firebase/auth";
+import { getRedirectResult, sendEmailVerification, signInWithRedirect, User } from "firebase/auth";
 import { auth, FacebookUser, firestore } from "../../../firebase";
 import { collection, doc, getDoc, getDocs, query, setDoc, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 
 //  FACEBOOK SIGNUP WITH POPUP FUNCTIONALITY
-const facebookSignUp = async (setError: (message: string) => void, navigate: any) => {
-  try {
-    const resp = await signInWithPopup(auth, FacebookUser);
-    const user = resp.user;
+// const facebookSignUp = async (navigate: any) => {
+//   try {
+//     const resp = await signInWithPopup(auth, FacebookUser);
+//     const user = resp.user;
 
-    await storeUserData(user, 'Facebook', navigate);
-  } 
-  catch (err: any) {
-    if (err.message === 'Email already exists, cannot create new user') {
-      setError(err.message);
-      showToastMessage(err.message, 'warning');
-    } else {
-      console.log('An error occurred:', err);
+//     await storeUserData(user, 'Facebook', navigate);
+//   } 
+//   catch (err: any) {
+//     if (err.message === 'Email already exists, cannot create new user') {
+//       showToastMessage(err.message, 'warning');
+//       navigate('/hive-hub');
+//     }
+//     else {
+//       console.log('An error occurred:', err);
+//       showToastMessage('Sign up failed: ' + err.message, 'error');
+//     }
+//   }
+// };
+
+const facebookSignUp = async () => { // Removed 'navigate: any'
+    try {
+        await signInWithRedirect(auth, FacebookUser);
     }
-  }
-};
+    // ... error handling remains the same (without navigate calls inside here)
+    catch (err: any) {
+        if (err.message === 'Email already exists, cannot create new user') {
+            showToastMessage(err.message, 'warning');
+            // Remove navigate('/hive-hub');
+            return { status: 'signedIn' };
+        } else {
+            console.log('An error occurred:', err);
+            showToastMessage('Sign up failed: ' + err.message, 'error');
+        }
+    }
+}
 
 //  SIGNING UP USER/READER AND SAVING THEIR DATA
-const storeUserData = async (user: any, provider: string, navigate: any) => {
+const storeUserData = async (user: any, provider: string) => {
   try {
     const checkEmailExists = await emailExists(user.email);
 
     if (checkEmailExists) {
-      if (provider === 'Google') {
+      // if (provider === 'Google') {
         showToastMessage('Email already exists, signing in with Google', 'warning');
-        navigate('/hive-hub');
-        return;
-      }
-      else {
-        throw new Error('Email already exists, cannot create new user');
-      }
+        // navigate('/hive-hub');
+      return { status: 'signedIn' };
+      // }
+      // else {
+        // throw new Error('Email already exists, cannot create new user');
+      // }
       
     }
 
@@ -55,15 +75,18 @@ const storeUserData = async (user: any, provider: string, navigate: any) => {
       await setDoc(userDocRef, userData);
       await sendEmailVerification(user);
       showToastMessage('Sign up successful and email verification sent', 'success');
-      navigate('/hive-hub');
+      // navigate('/hive-hub');
+      return { status: 'signedUp' };
     } 
-    else {
-      showToastMessage('Sign in successful', 'success');
-      navigate('/hive-hub');
-    }
-  } catch (err) {
-    console.log('Invalid User');
-    showToastMessage('Authentication failed: ' + err, 'error');
+    // else {
+    showToastMessage('Sign in successful', 'success');
+    //   navigate('/hive-hub');
+    return { status: 'signedIn' };
+    // }
+  } catch (err: any) {
+    console.log('Invalid User', err);
+    showToastMessage('Authentication failed: ' + err.message, 'error');
+    return { status: 'error', message: err.message };
   }
 };
 
@@ -119,9 +142,38 @@ const showToastMessage = ( message: any, type: any ) => {
 
 
 const FacebookAuth = () => {
+  const navigate = useNavigate();
+
   const [currentUser, setCurrentUser] = useState<User | null>(auth.currentUser);
   // @ts-ignore
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+
+        if (result) {
+          const user = result.user;
+
+          const resultStatus = await storeUserData(user, 'Facebook');
+
+          if (resultStatus.status === 'signedIn' || resultStatus.status === 'signedUp') {
+            navigate('/hive-hub');
+          }
+        }
+      } catch (error: any) {
+        if (error.code === 'auth/account-exists-with-different-credential') {
+          showToastMessage('Email already in use with a different sign-in method.', 'error');
+        } else {
+          console.error('Facebook Redirect Error:', error);
+          showToastMessage('Sign in failed: ' + error.message, 'error');
+        }
+      }
+    };
+
+    handleRedirectResult();
+  }, [navigate]);
 
   useEffect(() => {
     const signedReader = auth.onAuthStateChanged((user: User | null) => {
@@ -132,7 +184,7 @@ const FacebookAuth = () => {
 
   return (
     <div>
-      <Toaster
+      {/* <Toaster
         position='top-right'
         visibleToasts={2}
         dir='rtl'
@@ -141,7 +193,7 @@ const FacebookAuth = () => {
         expand={true}
         richColors
         closeButton
-      />
+      /> */}
     </div>
   );
 };

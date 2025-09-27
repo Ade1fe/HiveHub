@@ -5,7 +5,7 @@ import { BiLocationPlus } from 'react-icons/bi';
 
 const Footer = () => {
   return (
-    <Box as='footer' borderTop='1px solid' borderColor='gray.200' backgroundColor='gray.50' position='sticky' bottom='0' py={['6', '8']} px={['4', '8']} textAlign={{ base: 'center', md: 'left' }} w='full'>
+    <Box as='footer' borderTop='1px solid' borderColor='gray.200' backgroundColor='gray.50' position='fixed' bottom='0' py={['6', '8']} px={['4', '8']} textAlign={{ base: 'center', md: 'left' }} w='full'>
       <Flex maxW='1340px' mx='auto' direction={{ base: 'column-reverse', md: 'row' }} justifyContent='space-between' alignItems='center' gap={['6', '8']} >
         <Text fontSize="sm" color="gray.500" flexShrink={0}>&copy; {new Date().getFullYear()}, All Rights Reserved</Text>  
         <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} flexWrap='wrap' justifyContent={{ base: 'center', md: 'flex-start' }} alignItems="center" gap={{ base: '3', sm: '6', lg: '8' }}>

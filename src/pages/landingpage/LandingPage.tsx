@@ -363,7 +363,7 @@ const LandingPage = () => {
 
 
 
-          <Button w={['120px', '150px']} px='5px' borderRadius='250px' variant='solid' bg='black' color='white' colorScheme='black' fontWeight='400' cursor='pointer' onClick={() => handleToggleModal('signup')} mt='1rem'>Start reading</Button>
+          <Button w={['120px', '150px']} px='5px' borderRadius='250px' variant='solid' bg='black' color='white' colorScheme='black' fontWeight='400' cursor='pointer' onClick={() => handleOpenModal('signup')} mt='1rem'>Start reading</Button>
         </Box>
 
         <AnimatePresence>

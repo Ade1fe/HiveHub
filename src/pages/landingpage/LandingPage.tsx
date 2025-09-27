@@ -1,132 +1,349 @@
+// import { Box, Button, Image, Text, useBreakpointValue } from "@chakra-ui/react"
+// import { AnimatePresence, motion } from "framer-motion";
+// import reader from '../../assets/woman-using-digital-tablet-technology.png'
+// import { CustomModal, Footer, Header } from "../../components";
+// import { useState } from "react";
+// import { FcGoogle } from "react-icons/fc";
+// import { BsFacebook } from "react-icons/bs";
+// import { HiOutlineMail } from "react-icons/hi";
+// // import { useNavigate } from "react-router-dom";
+// import { facebookSignUp, FacebookAuth } from './../auth/facebook/FacebookAuth';
+// import { googleSignUp, GoogleAuth } from './../auth/google/GoogleAuth';
+// import { createReader } from './../auth/signup/SignUpForm';
+// import { readReader } from './../auth/signin/SignInForm';
+// import { Toaster } from "sonner";
+
+// const LandingPage = () => {
+//   // const navigate = useNavigate();
+//   const initialWidth = useBreakpointValue({ base: '25px', md: '35px' });
+//   const exitWidth = useBreakpointValue({ base: '25px', md: '35px' });
+//   const animateWidth = useBreakpointValue({ base: '50%', md: '25%' });
+//   const initialHeight = useBreakpointValue({ base: '25px', md: '25px' });
+//   const exitHeight = useBreakpointValue({ base: '25px', md: '25px' });
+//   const animateHeight = useBreakpointValue({ base: '25px', md: '25px' });
+
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   // @ts-ignore
+//   const [isSignInOpen, setIsSignInOpen] = useState(false);
+//   const [showEmailSignUp, setShowEmailSignUp] = useState(false);
+//   const [modalContext, setModalContext] = useState("");
+//   // const [error, setError] = useState<string | null>(null);
+
+//   const toggleModal = (configType: string) => {
+//     if (configType === 'signin') {
+//       setIsSignInOpen(true);
+//       setIsModalOpen(true);
+//       setModalContext('signin');
+//       setShowEmailSignUp(false);
+//     } else if (configType === 'signup') {
+//       setIsSignInOpen(false);
+//       setIsModalOpen(true);
+//       setModalContext('signup');
+//       setShowEmailSignUp(false);
+//     } else if (configType === 'emailSignUp') {
+//       setIsSignInOpen(false);
+//       setIsModalOpen(true);
+//       // setModalContext('emailSignUp');
+//       setShowEmailSignUp(true);
+//     }
+//   };
+
+//   const emailConfig = {
+//     // title: {modalContext === 'signin' ? 'Sign in with Email' : ''},
+//     getSubtitleAndContext: (modalConfig: any) => {
+//       const { subtitleText, modalContext } = getEmailSubtitleAndContext(modalConfig);
+//       subtitleText: subtitleText;
+//       modalContext: modalContext;
+//       return { subtitleText, modalContext };
+//     },
+//   };
+
+//   // console.log(isSignInOpen);
+//   // useEffect(() => {
+//   //   if (error) {
+//   //     toast.error(error);
+//   //     setError(null);
+//   //   }
+//   // }, [error]);
+  
+//   const getEmailSubtitleAndContext = (modalConfig: any) => {
+//     // console.log("Modal Config in getSubtitleAndContext:", modalConfig);
+//       let subtitleText = '';
+//       let modalContext = '';
+
+//       switch (modalConfig) {
+//         case signInConfig:
+//           subtitleText = 'Enter the email address and password associated with your account';
+//           modalContext = 'All sign in options';
+//           break;
+//         case signUpConfig:
+//           subtitleText = 'Enter your email address to create an account.';
+//           modalContext = 'All sign up options';
+//           break;
+//         default:
+//           // Default values or error handling
+//           subtitleText = '';
+//           modalContext = '';
+//           break;
+//       }
+
+//       return { subtitleText, modalContext };
+//   }
+
+//   const emailSignUp = () => {
+//     toggleModal('emailSignUp')
+//     // setShowEmailSignUp(true);
+//     // console.log(emailConfig);
+//   }
+
+//   const signUpConfig = {
+//     title: 'Come aboard Hivehub',
+//     buttons: [
+//       { onClick: () => googleSignUp(), icon: <FcGoogle className='google' />, text: 'Google', setAuthMethod: 'google', },
+//       { onClick: () => facebookSignUp(), icon: <BsFacebook className='facebook' />, text: 'Facebook', setAuthMethod: 'facebook', },
+//       { onClick: emailSignUp, icon: <HiOutlineMail className='email' />, text: 'Email', },
+//     ],
+//     texts: [
+//       { content: 'Already have an account? <span style="color: blue; font-weight: bold; cursor: pointer;">Sign in</span>', textStyles: { fontSize: '16px' }, configType: 'signin' },
+//       { content: 'Click “Sign up” to agree to Hivehub’s <span style="text-decoration: underline; cursor: pointer; ">Terms of Service</span> and acknowledge that Hivehub <span style="text-decoration: underline; cursor: pointer; ">Privacy Policy</span> applies to you.', textStyles: { padding: '8px 5px', marginTop: '20px', width: '90% 70% ', fontSize: '10px 14px' } },
+//     ]
+//   }
+
+//   const signInConfig = {
+//     title: 'Welcome back.',
+//     buttons: [
+//       { onClick: () => googleSignUp(), icon: <FcGoogle className='google' />, text: 'Google', setAuthMethod: 'google', },
+//       { onClick: () => facebookSignUp(), icon: <BsFacebook className='facebook' />, text: 'Facebook', setAuthMethod: 'facebook', },
+//       { onClick: emailSignUp, icon: <HiOutlineMail className='email' />, text: 'Email', },
+//     ],
+//     texts: [
+//       { content: 'No account? <span style="color: green; font-weight: bold; cursor: pointer;">Create one</span>', textStyles: { fontSize: '16px' }, configType: 'signup' },
+//       { content: 'Click “Sign up” to agree to Hivehub’s <span style="text-decoration: underline; cursor: pointer; ">Terms of Service</span> and acknowledge that Hivehub <span style="text-decoration: underline; cursor: pointer; ">Privacy Policy</span> applies to you.', textStyles: { padding: '8px 5px', marginTop: '20px', width: '90% 70% ', fontSize: '10px 14px' } },
+//     ]
+//   }
+
+//   const { subtitleText } = getEmailSubtitleAndContext(modalContext === "signin" ? signInConfig : modalContext === "signup" ? signUpConfig : emailConfig);
+
+//   return (
+//     <Box display='flex' flexDir='column' w='100%' alignItems='center' justifyContent='center' gap={['20px', '30px']} px={[4,4,4,4,2,0]} >
+//       <Header toggleModal={(type: string) => toggleModal(type)} />
+
+//       <Box display='flex' flexDir={['column', 'row']} w={['100%', '95%']} marginX='auto' pos='relative' alignItems='center' justifyContent={['center', 'space-between']} px={['2%', '3%']} maxW="1440px" mx='auto' py={['2%', '6.49%']} gap={['40px', '60px']} overflow='hidden'>
+//         <motion.div initial={{ opacity: 1, y: -20, background: '#e5989b' }} animate={{ opacity: 0.5, y: 0, background: '#0077b6' }} exit={{ opacity: 1, y: -20, background: '#cdb4db' }} transition={{ type: 'tween', duration: 1.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="ball" ></motion.div>
+//         <motion.div initial={{ opacity: 1, background: '#656d4a', width: initialWidth, height: initialHeight, borderRadius: '50%' }} animate={{ opacity: 0.5, background: '#b5179e', width: animateWidth, height: animateHeight, borderRadius: '10px' }} exit={{ opacity: 1, background: '#455e89', width: exitWidth, height: exitHeight, borderRadius: '50%' }} transition={{ type: 'tween', duration: 2.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="sphere" ></motion.div>
+
+//         <Box w={[ '100%', '75%' ]} display='flex' flexDir='column' gap='10px' className="text">
+
+//           <Text as='h3' fontSize={['40px', '50px']} fontWeight='600' >
+//             Embark on an <Text as='span' color='blue.900'>Adventure</Text>
+//           </Text>
+//           <Text as='p' fontSize='larger' fontWeight='500' textColor='GrayText' >
+//             Dive into Captivating Stories, Discover Hidden Insights, and Immerse Yourself in Endless Entertainment!
+//           </Text>
+//           <Text as='p' fontSize='large' fontWeight='400' textColor='GrayText' >
+//             Ready to explore? Our platform offers thrilling adventures, insightful narratives, and captivating entertainment for all. Join our community and ignite your imagination. Your journey starts here.
+//           </Text>
+
+
+
+//           <Button w={['120px', '150px']} px='5px' borderRadius='250px' variant='solid' bg='black' color='white' colorScheme='black' fontWeight='400' cursor='pointer' onClick={() => toggleModal('signup')} mt='1rem'>Start reading</Button>
+//         </Box>
+
+//         <AnimatePresence>
+//           <motion.div initial={{ opacity: 1, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 1, y: -5 }} transition={{ duration: 3.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="sChakraUI">
+//             <Image src={reader} objectFit='cover' w='100%' h='auto' alt='reader' />
+//           </motion.div>
+//         </AnimatePresence>
+        
+
+//         <motion.div initial={{ opacity: 1, y: -20, background: '#aec3b0' }} animate={{ opacity: 0.5, y: 0, background: '#ff206e' }} exit={{ opacity: 1, y: -20, background: '#ff1654' }} transition={{ type: 'tween', duration: 1.6, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="ball1" ></motion.div>
+//         <motion.div initial={{ opacity: 1, x: -20, background: '#ff1654' }} animate={{ opacity: 0.5, x: 0, background: '#e6ebe0' }} exit={{ opacity: 1, x: -20, background: '#6d2e46' }} transition={{ type: 'tween', duration: 1.8, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="ball2" ></motion.div>
+//         <motion.div initial={{ opacity: 1, y: -20, background: '#7ae582' }} animate={{ opacity: 0.5, y: 0, background: '#9db4c0' }} exit={{ opacity: 1, y: -20, background: '#fbff12' }} transition={{ type: 'tween', duration: 1.9, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="ball3" ></motion.div>
+//         <motion.div initial={{ opacity: 1, y: -20, background: '#fbff12', clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }} animate={{ opacity: 0.5, y: 0, background: '#0077b6' }} exit={{ opacity: 1, y: -20, background: '#3f4238' }} transition={{ type: 'tween', duration: 1.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="star"></motion.div>
+//         <motion.div initial={{ opacity: 1, background: '#d8e2dc', width: '25px', height: initialWidth, borderRadius: '50%' }} animate={{ opacity: 0.5, background: '#b5179e', width: '25px', height: '60%', borderRadius: '10px' }} exit={{ opacity: 1, background: '#cdb4db', width: '25px', height: exitWidth, borderRadius: '50%' }} transition={{ type: 'tween', duration: 2.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="sphere1" ></motion.div>
+
+
+        
+
+//         <motion.div initial={{ opacity: 1, y: -20, background: '#e5989b' }} animate={{ opacity: 0.5, y: 0, background: '#affc41' }} exit={{ opacity: 1, y: -20, background: '#ff1654' }} transition={{ type: 'tween', duration: 2.0, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="ball4" ></motion.div>
+//         <motion.div initial={{ opacity: 1, x: -20, background: '#ee6055', clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }} animate={{ opacity: 0.5, x: 0, background: '#fbff12' }} exit={{ opacity: 1, x: -20, background: '#662e9b' }} transition={{ type: 'tween', duration: 1.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="star1"></motion.div>
+//       </Box>
+      
+//       <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} modalConfig={modalContext === "signin" ? signInConfig : modalContext === "signup" ? signUpConfig : emailConfig} toggleModal={toggleModal} facebookSignUp={facebookSignUp} googleSignUp={googleSignUp} showEmailSignUp={showEmailSignUp} emailConfig={emailConfig} modalContext={modalContext} subtitleText={subtitleText} createReader={createReader} readReader={readReader} />
+//       <>
+//         <GoogleAuth />
+//         <FacebookAuth />
+//       </>
+      
+//       <Toaster
+//         position='top-right'
+//         visibleToasts={2}
+//         dir='rtl'
+//         theme="light"
+//         invert={true}
+//         expand={true}
+//         richColors
+//         closeButton
+//       />
+//       <Footer />
+//     </Box>
+//   )
+// }
+
+// export default LandingPage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { Box, Button, Image, Text, useBreakpointValue } from "@chakra-ui/react"
 import { AnimatePresence, motion } from "framer-motion";
 import reader from '../../assets/woman-using-digital-tablet-technology.png'
+import { useState } from 'react';
+import { useAuthRedirect } from '../../hooks/useAuthRedirect';
 import { CustomModal, Footer, Header } from "../../components";
-import { useEffect, useState } from "react";
-import { FcGoogle } from "react-icons/fc";
+import { GoogleUser, FacebookUser } from '../../firebase'; 
+import { FcGoogle } from 'react-icons/fc';
 import { BsFacebook } from "react-icons/bs";
 import { HiOutlineMail } from "react-icons/hi";
-import { useNavigate } from "react-router-dom";
-import { facebookSignUp, FacebookAuth } from './../auth/facebook/FacebookAuth';
-import { googleSignUp, GoogleAuth } from './../auth/google/GoogleAuth';
-import { createReader } from './../auth/signup/SignUpForm';
-import { readReader } from './../auth/signin/SignInForm';
-import { Toaster, toast } from "sonner";
+
+// Helper component that mounts the hook to handle the redirect return
+// const AuthRedirectHandler = () => {
+//     useAuthRedirect();
+//     return null; 
+// };
+
+// Mock Modal Configs (to make the component runnable)
+const SIGNUP_CONFIG = {
+  title: "Join the Hub",
+  buttons: [
+    { text: 'Google', icon: <FcGoogle className='google' /> },
+    { text: 'Facebook', icon: <BsFacebook className='facebook' /> },
+    { text: 'Email', icon: <HiOutlineMail className='email' /> }
+  ],
+  texts: [
+    { content: 'Already have an account? <span style="color: blue; font-weight: bold; cursor: pointer;">Sign in</span>', textStyles: { fontSize: '16px' }, configType: 'signin' },
+    { content: 'Click “Sign up” to agree to Hivehub’s <span style="text-decoration: underline; cursor: pointer; ">Terms of Service</span> and acknowledge that Hivehub <span style="text-decoration: underline; cursor: pointer; ">Privacy Policy</span> applies to you.', textStyles: { padding: '8px 5px', marginTop: '20px', width: '90% 70% ', fontSize: '10px 14px' } },
+  ]
+};
+
+const SIGNIN_CONFIG = {
+  title: "Welcome Back",
+  buttons: [
+    { text: 'Google', icon: <FcGoogle className='google' /> },
+    { text: 'Facebook', icon: <BsFacebook className='facebook' /> },
+    { text: 'Email', icon: <HiOutlineMail className='email' /> }
+  ],
+  texts: [
+    { content: 'No account? <span style="color: green; font-weight: bold; cursor: pointer;">Create one</span>', textStyles: { fontSize: '16px' }, configType: 'signup' },
+    { content: 'Click “Sign up” to agree to Hivehub’s <span style="text-decoration: underline; cursor: pointer; ">Terms of Service</span> and acknowledge that Hivehub <span style="text-decoration: underline; cursor: pointer; ">Privacy Policy</span> applies to you.', textStyles: { padding: '8px 5px', marginTop: '20px', width: '90% 70% ', fontSize: '10px 14px' } },
+  ]
+};
+
+const emailConfig = {
+  // title: {modalContext === 'signin' ? 'Sign in with Email' : ''},
+  getSubtitleAndContext: (modalConfig: any) => {
+    const { subtitleText, modalContext } = getEmailSubtitleAndContext(modalConfig);
+    subtitleText: subtitleText;
+    modalContext: modalContext;
+    return { subtitleText, modalContext };
+  },
+};
+
+const getEmailSubtitleAndContext = (modalConfig: any) => {
+    // console.log("Modal Config in getSubtitleAndContext:", modalConfig);
+  let subtitleText = '';
+  let modalContext = '';
+
+  switch (modalConfig) {
+    case SIGNIN_CONFIG:
+      subtitleText = 'Enter the email address and password associated with your account';
+      modalContext = 'All sign in options';
+      break;
+    case SIGNUP_CONFIG:
+      subtitleText = 'Enter your email address to create an account.';
+      modalContext = 'All sign up options';
+      break;
+    default:
+      // Default values or error handling
+      subtitleText = '';
+      modalContext = '';
+      break;
+  }
+
+  return { subtitleText, modalContext };
+}
+
 
 const LandingPage = () => {
-  const navigate = useNavigate();
+  const { initiateSignIn } = useAuthRedirect();
+
   const initialWidth = useBreakpointValue({ base: '25px', md: '35px' });
   const exitWidth = useBreakpointValue({ base: '25px', md: '35px' });
   const animateWidth = useBreakpointValue({ base: '50%', md: '25%' });
   const initialHeight = useBreakpointValue({ base: '25px', md: '25px' });
   const exitHeight = useBreakpointValue({ base: '25px', md: '25px' });
   const animateHeight = useBreakpointValue({ base: '25px', md: '25px' });
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  // @ts-ignore
-  const [isSignInOpen, setIsSignInOpen] = useState(false);
-  const [showEmailSignUp, setShowEmailSignUp] = useState(false);
-  const [modalContext, setModalContext] = useState("");
-  const [error, setError] = useState<string | null>(null);
-
-  const toggleModal = (configType: string) => {
-    if (configType === 'signin') {
-      setIsSignInOpen(true);
-      setIsModalOpen(true);
-      setModalContext('signin');
-      setShowEmailSignUp(false);
-    } else if (configType === 'signup') {
-      setIsSignInOpen(false);
-      setIsModalOpen(true);
-      setModalContext('signup');
-      setShowEmailSignUp(false);
-    } else if (configType === 'emailSignUp') {
-      setIsSignInOpen(false);
-      setIsModalOpen(true);
-      // setModalContext('emailSignUp');
-      setShowEmailSignUp(true);
-    }
-  };
-
-  const emailConfig = {
-    // title: {modalContext === 'signin' ? 'Sign in with Email' : ''},
-    getSubtitleAndContext: (modalConfig: any) => {
-      const { subtitleText, modalContext } = getEmailSubtitleAndContext(modalConfig);
-      subtitleText: subtitleText;
-      modalContext: modalContext;
-      return { subtitleText, modalContext };
-    },
-  };
-
-  // console.log(isSignInOpen);
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-      setError(null);
-    }
-  }, [error]);
   
-  const getEmailSubtitleAndContext = (modalConfig: any) => {
-    // console.log("Modal Config in getSubtitleAndContext:", modalConfig);
-      let subtitleText = '';
-      let modalContext = '';
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContext, setModalContext] = useState('signup'); // 'signup' | 'signin'
+  const [showEmailSignUp, setShowEmailSignUp] = useState(false);
+  
+  const { subtitleText } = getEmailSubtitleAndContext(modalContext === "signin" ? SIGNIN_CONFIG : modalContext === "signup" ? SIGNUP_CONFIG : emailConfig);
 
-      switch (modalConfig) {
-        case signInConfig:
-          subtitleText = 'Enter the email address and password associated with your account';
-          modalContext = 'All sign in options';
-          break;
-        case signUpConfig:
-          subtitleText = 'Enter your email address to create an account.';
-          modalContext = 'All sign up options';
-          break;
-        default:
-          // Default values or error handling
-          subtitleText = '';
-          modalContext = '';
-          break;
+  const handleOpenModal = (context: string) => {
+    setModalContext(context);
+    setShowEmailSignUp(false);
+    setIsModalOpen(true);
+  };
+
+  const handleToggleModal = (type: string) => {
+      if (type === 'emailSignUp') {
+        setShowEmailSignUp(true);
+      } else {
+        setModalContext(type);
+        setShowEmailSignUp(false);
       }
+  };
 
-      return { subtitleText, modalContext };
-  }
+  // --- Functions to pass to the Modal ---
+  const googleSignIn = () => initiateSignIn(GoogleUser, 'Google');
+  const facebookSignIn = () => initiateSignIn(FacebookUser, 'Facebook');
+  
+  // Mock for email/password functions
+  const createReader = async (username: string, email: string, successCallback: () => void) => {console.log(`Creating user: ${username}, ${email}`); successCallback();};
+  const readReader = async (email: string, successCallback: () => void) => {
+  console.log(`Signing in user: ${email}`); successCallback(); };
 
-  const emailSignUp = () => {
-    toggleModal('emailSignUp')
-    // setShowEmailSignUp(true);
-    // console.log(emailConfig);
-  }
-
-  const signUpConfig = {
-    title: 'Come aboard Hivehub',
-    buttons: [
-      { onClick: () => googleSignUp((errorMsg) =>setError(errorMsg), navigate), icon: <FcGoogle className='google' />, text: 'Google', setAuthMethod: 'google', },
-      { onClick: () => facebookSignUp((errorMsg) =>setError(errorMsg), navigate), icon: <BsFacebook className='facebook' />, text: 'Facebook', setAuthMethod: 'facebook', },
-      { onClick: emailSignUp, icon: <HiOutlineMail className='email' />, text: 'Email', },
-    ],
-    texts: [
-      { content: 'Already have an account? <span style="color: blue; font-weight: bold; cursor: pointer;">Sign in</span>', textStyles: { fontSize: '16px' }, configType: 'signin' },
-      { content: 'Click “Sign up” to agree to Hivehub’s <span style="text-decoration: underline; cursor: pointer; ">Terms of Service</span> and acknowledge that Hivehub <span style="text-decoration: underline; cursor: pointer; ">Privacy Policy</span> applies to you.', textStyles: { padding: '8px 5px', marginTop: '20px', width: '90% 70% ', fontSize: '10px 14px' } },
-    ]
-  }
-
-  const signInConfig = {
-    title: 'Welcome back.',
-    buttons: [
-      { onClick: () => googleSignUp((errorMsg) =>setError(errorMsg), navigate), icon: <FcGoogle className='google' />, text: 'Google', setAuthMethod: 'google', },
-      { onClick: () => facebookSignUp((errorMsg) =>setError(errorMsg), navigate), icon: <BsFacebook className='facebook' />, text: 'Facebook', setAuthMethod: 'facebook', },
-      { onClick: emailSignUp, icon: <HiOutlineMail className='email' />, text: 'Email', },
-    ],
-    texts: [
-      { content: 'No account? <span style="color: green; font-weight: bold; cursor: pointer;">Create one</span>', textStyles: { fontSize: '16px' }, configType: 'signup' },
-      { content: 'Click “Sign up” to agree to Hivehub’s <span style="text-decoration: underline; cursor: pointer; ">Terms of Service</span> and acknowledge that Hivehub <span style="text-decoration: underline; cursor: pointer; ">Privacy Policy</span> applies to you.', textStyles: { padding: '8px 5px', marginTop: '20px', width: '90% 70% ', fontSize: '10px 14px' } },
-    ]
-  }
-
-  const { subtitleText } = getEmailSubtitleAndContext(modalContext === "signin" ? signInConfig : modalContext === "signup" ? signUpConfig : emailConfig);
 
   return (
     <Box display='flex' flexDir='column' w='100%' alignItems='center' justifyContent='center' gap={['20px', '30px']} px={[4,4,4,4,2,0]} >
-      <Header toggleModal={(type: string) => toggleModal(type)} />
+      <Header toggleModal={handleOpenModal} />
+        {/* CRITICAL: AuthRedirectHandler mounts the useAuthRedirect hook.
+          It runs the getRedirectResult check on every load of this page.
+          Since this is your root path ('/'), it will successfully capture the redirect.
+        */}
+      {/* <AuthRedirectHandler />  */}
 
       <Box display='flex' flexDir={['column', 'row']} w={['100%', '95%']} marginX='auto' pos='relative' alignItems='center' justifyContent={['center', 'space-between']} px={['2%', '3%']} maxW="1440px" mx='auto' py={['2%', '6.49%']} gap={['40px', '60px']} overflow='hidden'>
         <motion.div initial={{ opacity: 1, y: -20, background: '#e5989b' }} animate={{ opacity: 0.5, y: 0, background: '#0077b6' }} exit={{ opacity: 1, y: -20, background: '#cdb4db' }} transition={{ type: 'tween', duration: 1.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="ball" ></motion.div>
@@ -146,7 +363,7 @@ const LandingPage = () => {
 
 
 
-          <Button w={['120px', '150px']} px='5px' borderRadius='250px' variant='solid' bg='black' color='white' colorScheme='black' fontWeight='400' cursor='pointer' onClick={() => toggleModal('signup')} mt='1rem'>Start reading</Button>
+          <Button w={['120px', '150px']} px='5px' borderRadius='250px' variant='solid' bg='black' color='white' colorScheme='black' fontWeight='400' cursor='pointer' onClick={() => handleToggleModal('signup')} mt='1rem'>Start reading</Button>
         </Box>
 
         <AnimatePresence>
@@ -161,33 +378,34 @@ const LandingPage = () => {
         <motion.div initial={{ opacity: 1, y: -20, background: '#7ae582' }} animate={{ opacity: 0.5, y: 0, background: '#9db4c0' }} exit={{ opacity: 1, y: -20, background: '#fbff12' }} transition={{ type: 'tween', duration: 1.9, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="ball3" ></motion.div>
         <motion.div initial={{ opacity: 1, y: -20, background: '#fbff12', clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }} animate={{ opacity: 0.5, y: 0, background: '#0077b6' }} exit={{ opacity: 1, y: -20, background: '#3f4238' }} transition={{ type: 'tween', duration: 1.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="star"></motion.div>
         <motion.div initial={{ opacity: 1, background: '#d8e2dc', width: '25px', height: initialWidth, borderRadius: '50%' }} animate={{ opacity: 0.5, background: '#b5179e', width: '25px', height: '60%', borderRadius: '10px' }} exit={{ opacity: 1, background: '#cdb4db', width: '25px', height: exitWidth, borderRadius: '50%' }} transition={{ type: 'tween', duration: 2.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="sphere1" ></motion.div>
-
-
         
 
         <motion.div initial={{ opacity: 1, y: -20, background: '#e5989b' }} animate={{ opacity: 0.5, y: 0, background: '#affc41' }} exit={{ opacity: 1, y: -20, background: '#ff1654' }} transition={{ type: 'tween', duration: 2.0, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="ball4" ></motion.div>
         <motion.div initial={{ opacity: 1, x: -20, background: '#ee6055', clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)' }} animate={{ opacity: 0.5, x: 0, background: '#fbff12' }} exit={{ opacity: 1, x: -20, background: '#662e9b' }} transition={{ type: 'tween', duration: 1.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }} className="star1"></motion.div>
       </Box>
+
+      {/* <Button onClick={() => handleOpenModal('signup')} colorScheme='blue' mr={4}>Open Sign Up</Button>
+      <Button onClick={() => handleOpenModal('signin')} colorScheme='green'>Open Sign In</Button> */}
       
-      <CustomModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} modalConfig={modalContext === "signin" ? signInConfig : modalContext === "signup" ? signUpConfig : emailConfig} toggleModal={toggleModal} facebookSignUp={facebookSignUp} googleSignUp={googleSignUp} showEmailSignUp={showEmailSignUp} emailConfig={emailConfig} modalContext={modalContext} subtitleText={subtitleText} createReader={createReader} readReader={readReader} />
-      <>
-        <GoogleAuth />
-        <FacebookAuth />
-      </>
-      
-      <Toaster
-        position='top-right'
-        visibleToasts={2}
-        dir='rtl'
-        theme="light"
-        invert={true}
-        expand={true}
-        richColors
-        closeButton
+      <CustomModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        modalConfig={modalContext === 'signup' ? SIGNUP_CONFIG : SIGNIN_CONFIG}
+        modalContext={modalContext}
+        subtitleText={showEmailSignUp ? subtitleText : `Continue with your ${modalContext === 'signup' ? 'sign up' : 'sign in'} details.`}
+        toggleModal={handleToggleModal}
+        showEmailSignUp={showEmailSignUp}
+        
+        // --- PASSING THE HOOK FUNCTIONS DOWN ---
+        googleSignIn={googleSignIn}
+        facebookSignIn={facebookSignIn}
+        
+        createReader={createReader}
+        readReader={readReader}
       />
       <Footer />
     </Box>
-  )
-}
+  );
+};
 
-export default LandingPage
+export default LandingPage;

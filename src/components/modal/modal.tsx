@@ -5,7 +5,8 @@ import { PiEye, PiEyeClosed } from "react-icons/pi";
 import '../../index.css'
 
 // @ts-ignore
-const modal = ({ isOpen, onClose, onSubmit = () => {}, modalConfig, emailConfig, toggleModal, googleSignUp, facebookSignUp, subtitleText, modalContext, showEmailSignUp, createReader, readReader }: any) => {
+const modal = ({ isOpen, onClose, onSubmit = () => {}, modalConfig, emailConfig, toggleModal, googleSignIn, facebookSignIn, subtitleText, modalContext, showEmailSignUp, createReader, readReader }: any) => {
+    if (!isOpen) return null;
 
     const [formData, setFormData] = useState({ email: '', password: '', username:  '' });
 
@@ -20,7 +21,6 @@ const modal = ({ isOpen, onClose, onSubmit = () => {}, modalConfig, emailConfig,
         if (modalContext === 'signup') {
           await createReader(formData.username, formData.email, formData.password, onSubmit);
 
-          // onSubmit(formData);
           resetForm();
         }
         if (modalContext === 'signin') {
@@ -73,8 +73,6 @@ const modal = ({ isOpen, onClose, onSubmit = () => {}, modalConfig, emailConfig,
             
           );
         } else {
-            // const { buttons, texts } = modalConfig;
-
           return (
             <ModalBody pb={6} display='flex' flexDir='column' gap='35px' w='100%' alignItems='center' justifyContent='center' >
               <ModalHeader fontSize={['medium', 'x-large']} mt='20px'>{modalConfig.title}</ModalHeader>
@@ -85,10 +83,10 @@ const modal = ({ isOpen, onClose, onSubmit = () => {}, modalConfig, emailConfig,
                     type='submit' 
                     onClick={() => {switch (button.text) {
                       case 'Google':
-                        googleSignUp();
+                        googleSignIn();
                         break;
                       case 'Facebook':
-                        facebookSignUp();
+                        facebookSignIn();
                         break;
                       case 'Email':
                         toggleModal('emailSignUp'); // Handle email sign-up separately
@@ -127,12 +125,12 @@ const modal = ({ isOpen, onClose, onSubmit = () => {}, modalConfig, emailConfig,
   return (
     <div>
       <Modal isOpen={isOpen} onClose={onClose} isCentered size={['xs', 'md', 'lg']} >
-            <ModalOverlay backgroundColor='white' />
-                <ModalContent boxShadow='dark-lg' gap='15px' alignItems='center' textAlign='center'> 
-                    <ModalCloseButton />
-                    {renderModalContent()}
-            </ModalContent>
-        </Modal>
+        <ModalOverlay backgroundColor='white' />
+        <ModalContent boxShadow='dark-lg' gap='15px' alignItems='center' textAlign='center'> 
+          <ModalCloseButton />
+          {renderModalContent()}
+        </ModalContent>
+      </Modal>
     </div>
   )
 }

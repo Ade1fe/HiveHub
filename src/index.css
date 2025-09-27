@@ -264,6 +264,33 @@ Box[contenteditable="true"]::before {
 }
 
 
+/* Placeholder styling fallback for contentEditable */
+.editor-content:empty:before {
+    content: attr(data-placeholder);
+    color: #a0aec0;
+    pointer-events: none;
+    display: block;
+}
+/* Ensure p tags within the editor get proper vertical spacing */
+.editor-content p {
+    margin-bottom: 1.2rem;
+    min-height: 1.2rem;
+}
+/* General media styling */
+.editor-content img, .editor-content video {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+    margin: 15px auto;
+}
+/* Reset blockquote/pre default margins */
+.editor-content blockquote, .editor-content pre {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+
 @media(max-width: 468px) {
     .sChakraUI {
         order: 0;

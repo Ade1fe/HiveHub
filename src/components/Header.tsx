@@ -50,7 +50,7 @@ const Header = ({ toggleModal }: { toggleModal: any }) => {
                   {getMessage()}
                 </Box>
               </MenuButton>
-              <MenuList>
+              <MenuList zIndex={1000}>
                 <MenuItem>{user.email}</MenuItem>
                 <MenuDivider />
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>

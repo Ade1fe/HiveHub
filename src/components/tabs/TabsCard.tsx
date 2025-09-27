@@ -78,7 +78,7 @@ const TabsCard = () => {
                     // const contentImage = mediaUrls.length > 0 ? mediaUrls : [blogimg];
 
                     // const mediaPaths = Array.isArray(data.mediaPaths) ? data.mediaPaths : [];
-
+                    // @ts-ignore
                     const mediaUrls = await Promise.all(mediaPaths.map(async (path: string) => {
                         try {
                             const url = await getDownloadURL(ref(storage, path));
